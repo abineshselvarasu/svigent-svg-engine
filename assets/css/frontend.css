@@ -1,0 +1,15 @@
+/**
+ * Frontend responsive stylesheet for SVGFlow.
+ *
+ * @package SVGFlow
+ * @since   1.0.0
+ */
+
+.svg-flow-inlined,
+svg.style-svg,
+svg.svg-flow {
+	max-width: 100%;
+	height: auto;
+	display: inline-block;
+	vertical-align: middle;
+}
