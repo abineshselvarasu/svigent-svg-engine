@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       SVGFlow
+ * Plugin Name:       SVG Flow
  * Plugin URI:        https://wordpress.org/plugins/svg-flow/
  * Description:       Safe SVG Upload & Smart Inliner. Enable safe SVG & SVGZ uploads with automated DOM sanitization, clean Media Library thumbnail previews, automatic dimension detection, and high-performance client-side inline rendering.
  * Version:           1.0.0

@@ -1,4 +1,4 @@
-# SVGFlow
+# SVG Flow
 
 [![Required WP Version](https://img.shields.io/badge/WordPress-6.0%2B-blue.svg)](https://wordpress.org)
 [![Required PHP Version](https://img.shields.io/badge/Requires%20PHP-7.4%2B-777bb4.svg)](https://php.net)
