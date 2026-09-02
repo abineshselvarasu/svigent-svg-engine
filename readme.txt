@@ -1,5 +1,5 @@
 === SVGFlow ===
-Contributors: abinesh
+Contributors: abineshselvarasu
 Donate link: https://wordpress.org
 Tags: svg, safe svg, inline svg, svg support, vector
 Requires at least: 6.0
