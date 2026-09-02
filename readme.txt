@@ -49,8 +49,8 @@ SVG files are XML documents, meaning they can contain executable JavaScript and 
 = Does SVGFlow work with page builders? =
 Yes! SVGFlow works out of the box with the WordPress Block Editor (Gutenberg), Elementor, Beaver Builder, Divi, and classic themes.
 
-= Can other plugins extend the allowed SVG tags? =
-Yes. Developers can use the `svg_flow_allowed_tags` and `svg_flow_allowed_attributes` filters to whitelist specialized SVG tags or animations.
+= Do I need to write code to use SVGFlow? =
+No! SVGFlow works automatically. Once enabled, you can upload SVGs and style them using simple settings in your WordPress Admin.
 
 == Screenshots ==
 
