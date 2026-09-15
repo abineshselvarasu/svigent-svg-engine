@@ -1,4 +1,4 @@
-# Svigent Tools
+# WP SVG Engine
 
 [![Required WP Version](https://img.shields.io/badge/WordPress-6.0%2B-blue.svg)](https://wordpress.org)
 [![Required PHP Version](https://img.shields.io/badge/Requires%20PHP-7.4%2B-777bb4.svg)](https://php.net)
@@ -9,7 +9,7 @@ A lightweight, modern, and secure WordPress plugin that enables SVG uploads and 
 
 > **Development Repository**
 >
-> This GitHub repository is the development workspace for Svigent Tools. For production sites, install the official release from the [WordPress.org plugin directory](https://wordpress.org/plugins/svigent-tools/).
+> This GitHub repository is the development workspace for WP SVG Engine. For production sites, install the official release from the [WordPress.org plugin directory](https://wordpress.org/plugins/svigent-tools/).
 >
 > Releases are published to WordPress.org via SVN; this repository is used for version control, issue tracking, and future enhancements.
 
@@ -17,14 +17,14 @@ A lightweight, modern, and secure WordPress plugin that enables SVG uploads and 
 
 ## Description
 
-**Svigent Tools** enables safe SVG (Scalable Vector Graphics) and compressed SVGZ uploads in WordPress with automated DOM-level XML sanitization, native Media Library thumbnail fixes, dimension calculation, and fast frontend inlining.
+**WP SVG Engine** enables safe SVG (Scalable Vector Graphics) and compressed SVGZ uploads in WordPress with automated DOM-level XML sanitization, native Media Library thumbnail fixes, dimension calculation, and fast frontend inlining.
 
 ---
 
 ## Screenshot
 
 <p align="center">
-  <img src="assets/screenshots/screenshot-1.png" alt="Svigent Tools Settings Dashboard" width="800">
+  <img src="assets/screenshots/screenshot-1.png" alt="WP SVG Engine Settings Dashboard" width="800">
 </p>
 
 ---
@@ -48,20 +48,20 @@ A lightweight, modern, and secure WordPress plugin that enables SVG uploads and 
    ```bash
    git clone https://github.com/your-username/svigent-tools.git wp-content/plugins/svigent-tools
    ```
-2. Activate **Svigent Tools** in **WordPress Admin → Plugins**.
-3. Go to **Settings → Svigent Tools** to configure permissions and enable inlining.
+2. Activate **WP SVG Engine** in **WordPress Admin → Plugins**.
+3. Go to **Settings → WP SVG Engine** to configure permissions and enable inlining.
 
 ---
 
 ## Usage
 
 ### Inlining SVGs on the Frontend:
-1. Ensure **"Enable client-side inline SVG replacement"** is checked in **Settings → Svigent Tools**.
+1. Ensure **"Enable client-side inline SVG replacement"** is checked in **Settings → WP SVG Engine**.
 2. Add the class `style-svg` (or your custom selector) to any Image block or element in WordPress.
-3. Svigent Tools will automatically convert the `<img>` tag into an inline `<svg>` element on the frontend, allowing full CSS styling and color control.
+3. WP SVG Engine will automatically convert the `<img>` tag into an inline `<svg>` element on the frontend, allowing full CSS styling and color control.
 
 ---
 
 ## License
 
-Svigent Tools is open-source software licensed under the [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html).
+WP SVG Engine is open-source software licensed under the [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html).

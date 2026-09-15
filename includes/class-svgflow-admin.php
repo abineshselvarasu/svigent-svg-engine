@@ -39,8 +39,8 @@ class SVGFlow_Admin {
 	 */
 	public function register_admin_menu() {
 		$this->page_hook = add_options_page(
-			esc_html__( 'Svigent Tools Settings', 'svigent-tools' ),
-			esc_html__( 'Svigent Tools', 'svigent-tools' ),
+			esc_html__( 'WP SVG Engine Settings', 'svigent-tools' ),
+			esc_html__( 'WP SVG Engine', 'svigent-tools' ),
 			'manage_options',
 			'svigent-tools',
 			array( $this, 'render_settings_page' )
@@ -176,13 +176,17 @@ class SVGFlow_Admin {
 		<fieldset class="svg-flow-radio-group">
 			<label class="svg-flow-radio-label">
 				<input type="radio" name="svg_flow_settings[upload_permission]" value="admin_only" <?php checked( $current, 'admin_only' ); ?> />
-				<strong><?php esc_html_e( 'Administrators Only (Recommended)', 'svigent-tools' ); ?></strong>
-				<span class="description"><?php esc_html_e( 'Only users with administrator privileges can upload SVG files.', 'svigent-tools' ); ?></span>
+				<span class="svg-flow-radio-content">
+					<strong><?php esc_html_e( 'Administrators Only (Recommended)', 'svigent-tools' ); ?></strong>
+					<span class="description"><?php esc_html_e( 'Only users with administrator privileges can upload SVG files.', 'svigent-tools' ); ?></span>
+				</span>
 			</label>
 			<label class="svg-flow-radio-label">
 				<input type="radio" name="svg_flow_settings[upload_permission]" value="all_uploaders" <?php checked( $current, 'all_uploaders' ); ?> />
-				<strong><?php esc_html_e( 'All Users with Upload Rights', 'svigent-tools' ); ?></strong>
-				<span class="description"><?php esc_html_e( 'Allows Authors, Editors, and Administrators to upload sanitized SVGs.', 'svigent-tools' ); ?></span>
+				<span class="svg-flow-radio-content">
+					<strong><?php esc_html_e( 'All Users with Upload Rights', 'svigent-tools' ); ?></strong>
+					<span class="description"><?php esc_html_e( 'Allows Authors, Editors, and Administrators to upload sanitized SVGs.', 'svigent-tools' ); ?></span>
+				</span>
 			</label>
 		</fieldset>
 		<?php
@@ -290,7 +294,7 @@ class SVGFlow_Admin {
 		<div class="wrap svg-flow-wrap">
 			<div class="svg-flow-header">
 				<div class="svg-flow-header-title">
-					<h1><?php esc_html_e( 'Svigent Tools', 'svigent-tools' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVIGENT_TOOLS_VERSION ); ?></span></h1>
+					<h1><?php esc_html_e( 'WP SVG Engine', 'svigent-tools' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVIGENT_TOOLS_VERSION ); ?></span></h1>
 					<p class="svg-flow-subtitle"><?php esc_html_e( 'Safe SVG Upload & Smart Inliner Engine', 'svigent-tools' ); ?></p>
 				</div>
 				<div class="svg-flow-status-badge <?php echo esc_attr( $is_sanitizing ? 'status-active' : 'status-warning' ); ?>">
@@ -326,10 +330,10 @@ class SVGFlow_Admin {
 						<p class="description">
 							<?php esc_html_e( 'To render an SVG inline on your website, add this CSS class to any Image element:', 'svigent-tools' ); ?>
 						</p>
-						<div class="svg-flow-selector-box">
+						<div class="svg-flow-copy-box">
 							<code id="svg-flow-target-class"><?php echo esc_html( $first_selector ); ?></code>
-							<button type="button" class="button button-secondary svg-flow-copy-btn" data-target="svg-flow-target-class">
-								<span class="dashicons dashicons-admin-page"></span> <?php esc_html_e( 'Copy Class', 'svigent-tools' ); ?>
+							<button type="button" class="button button-primary svg-flow-copy-btn" data-target="svg-flow-target-class">
+								<span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Copy', 'svigent-tools' ); ?>
 							</button>
 						</div>
 						<ul class="svg-flow-guide-list">
@@ -342,7 +346,7 @@ class SVGFlow_Admin {
 					<div class="svg-flow-card">
 						<h3><?php esc_html_e( 'Security Standards', 'svigent-tools' ); ?></h3>
 						<p class="description">
-							<?php esc_html_e( 'Svigent Tools protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
+							<?php esc_html_e( 'WP SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
 						</p>
 					</div>
 				</div>
