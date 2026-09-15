@@ -137,24 +137,11 @@
 }
 
 /* ==========================================================================
-   3. Main Responsive Grid & Cards
+   3. Main Layout & Cards
    ========================================================================== */
 
 .svg-flow-layout {
-	display: flex;
-	gap: 24px;
-	align-items: flex-start;
-}
-
-.svg-flow-main-column {
-	flex: 1 1 auto;
-	min-width: 0;
-}
-
-.svg-flow-sidebar {
-	flex: 0 0 340px;
-	width: 340px;
-	min-width: 0;
+	max-width: 860px;
 }
 
 /* Card Styling */
@@ -403,18 +390,7 @@
    6. Responsive Breakpoints
    ========================================================================== */
 
-/* Tablet & Smaller Desktops (<= 960px) */
-@media (max-width: 960px) {
-	.svg-flow-layout {
-		flex-direction: column;
-	}
 
-	.svg-flow-main-column,
-	.svg-flow-sidebar {
-		width: 100%;
-		flex: 1 1 100%;
-	}
-}
 
 /* Standard WordPress Mobile Breakpoint (<= 782px) */
 @media (max-width: 782px) {

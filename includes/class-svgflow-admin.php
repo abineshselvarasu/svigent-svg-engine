@@ -312,44 +312,42 @@ class SVGFlow_Admin {
 			</div>
 
 			<div class="svg-flow-layout">
-				<div class="svg-flow-main-column">
-					<div class="svg-flow-card">
-						<form action="options.php" method="post">
-							<?php
-							settings_fields( 'svg_flow_settings_group' );
-							do_settings_sections( 'svigent-tools' );
-							submit_button();
-							?>
-						</form>
-					</div>
+
+				<div class="svg-flow-card">
+					<form action="options.php" method="post">
+						<?php
+						settings_fields( 'svg_flow_settings_group' );
+						do_settings_sections( 'svigent-tools' );
+						submit_button();
+						?>
+					</form>
 				</div>
 
-				<div class="svg-flow-sidebar">
-					<div class="svg-flow-card">
-						<h3><?php esc_html_e( 'Quick Inlining Guide', 'svigent-tools' ); ?></h3>
-						<p class="description">
-							<?php esc_html_e( 'To render an SVG inline on your website, add this CSS class to any Image element:', 'svigent-tools' ); ?>
-						</p>
-						<div class="svg-flow-copy-box">
-							<code id="svg-flow-target-class"><?php echo esc_html( $first_selector ); ?></code>
-							<button type="button" class="button button-primary svg-flow-copy-btn" data-target="svg-flow-target-class">
-								<span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Copy', 'svigent-tools' ); ?>
-							</button>
-						</div>
-						<ul class="svg-flow-guide-list">
-							<li><strong><?php esc_html_e( 'Block Editor (Gutenberg):', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Select the Image block → Advanced → Additional CSS class(es).', 'svigent-tools' ); ?></li>
-							<li><strong><?php esc_html_e( 'Page Builders:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Add the class in Elementor, Divi, or Beaver Builder image settings.', 'svigent-tools' ); ?></li>
-							<li><strong><?php esc_html_e( 'CSS Styling:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Target elements inside inline SVGs using fill: currentColor or CSS hover transitions.', 'svigent-tools' ); ?></li>
-						</ul>
+				<div class="svg-flow-card">
+					<h3><?php esc_html_e( 'Quick Inlining Guide', 'svigent-tools' ); ?></h3>
+					<p class="description">
+						<?php esc_html_e( 'To render an SVG inline on your website, add this CSS class to any Image element:', 'svigent-tools' ); ?>
+					</p>
+					<div class="svg-flow-copy-box">
+						<code id="svg-flow-target-class"><?php echo esc_html( $first_selector ); ?></code>
+						<button type="button" class="button button-primary svg-flow-copy-btn" data-target="svg-flow-target-class">
+							<span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Copy', 'svigent-tools' ); ?>
+						</button>
 					</div>
-
-					<div class="svg-flow-card">
-						<h3><?php esc_html_e( 'Security Standards', 'svigent-tools' ); ?></h3>
-						<p class="description">
-							<?php esc_html_e( 'WP SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
-						</p>
-					</div>
+					<ul class="svg-flow-guide-list">
+						<li><strong><?php esc_html_e( 'Block Editor (Gutenberg):', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Select the Image block → Advanced → Additional CSS class(es).', 'svigent-tools' ); ?></li>
+						<li><strong><?php esc_html_e( 'Page Builders:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Add the class in Elementor, Divi, or Beaver Builder image settings.', 'svigent-tools' ); ?></li>
+						<li><strong><?php esc_html_e( 'CSS Styling:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Target elements inside inline SVGs using fill: currentColor or CSS hover transitions.', 'svigent-tools' ); ?></li>
+					</ul>
 				</div>
+
+				<div class="svg-flow-card">
+					<h3><?php esc_html_e( 'Security Standards', 'svigent-tools' ); ?></h3>
+					<p class="description">
+						<?php esc_html_e( 'WP SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
+					</p>
+				</div>
+
 			</div>
 		</div>
 		<?php

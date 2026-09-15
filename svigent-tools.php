@@ -3,7 +3,7 @@
  * Plugin Name:       WP SVG Engine
  * Plugin URI:        https://wordpress.org/plugins/svigent-tools/
  * Description:       Safe SVG Upload & Smart Inliner Engine. Enable safe SVG & SVGZ uploads with automated DOM sanitization, clean Media Library thumbnail previews, automatic dimension detection, and high-performance client-side inline rendering.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Abinesh Selvarasu
@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Version.
  */
-define( 'SVIGENT_TOOLS_VERSION', '1.0.0' );
+define( 'SVIGENT_TOOLS_VERSION', '1.0.1' );
 
 /**
  * Plugin File & Directory Constants.
