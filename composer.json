@@ -1,11 +1,11 @@
 {
-  "name": "svgflow/svg-flow",
+  "name": "abinesh/svigent-tools",
   "description": "Safe SVG Upload & Smart Inliner for WordPress",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
-      "name": "Abinesh",
+      "name": "Abinesh Selvarasu",
       "homepage": "https://wordpress.org"
     }
   ],

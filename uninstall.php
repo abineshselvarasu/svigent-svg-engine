@@ -11,10 +11,12 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-// Delete main plugin settings.
+// Delete plugin settings option.
+delete_option( 'svigent_tools_settings' );
 delete_option( 'svg_flow_settings' );
 
 // For WordPress multisite networks.
 if ( is_multisite() ) {
+	delete_site_option( 'svigent_tools_settings' );
 	delete_site_option( 'svg_flow_settings' );
 }

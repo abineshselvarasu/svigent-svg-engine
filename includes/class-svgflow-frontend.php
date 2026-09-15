@@ -35,9 +35,9 @@ class SVGFlow_Frontend {
 		if ( ! empty( $settings['responsive_css'] ) ) {
 			wp_enqueue_style(
 				'svg-flow-frontend',
-				SVG_FLOW_URL . 'assets/css/frontend.css',
+				SVIGENT_TOOLS_URL . 'assets/css/frontend.css',
 				array(),
-				SVG_FLOW_VERSION
+				SVIGENT_TOOLS_VERSION
 			);
 		}
 
@@ -45,9 +45,9 @@ class SVGFlow_Frontend {
 		if ( ! empty( $settings['frontend_inlining'] ) ) {
 			wp_enqueue_script(
 				'svg-flow-frontend',
-				SVG_FLOW_URL . 'assets/js/frontend.js',
+				SVIGENT_TOOLS_URL . 'assets/js/frontend.js',
 				array(),
-				SVG_FLOW_VERSION,
+				SVIGENT_TOOLS_VERSION,
 				true
 			);
 

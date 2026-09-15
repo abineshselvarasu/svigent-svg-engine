@@ -38,9 +38,9 @@ class SVGFlow_Media {
 	public function enqueue_admin_assets( $hook ) {
 		wp_enqueue_style(
 			'svg-flow-admin',
-			SVG_FLOW_URL . 'assets/css/admin.css',
+			SVIGENT_TOOLS_URL . 'assets/css/admin.css',
 			array(),
-			SVG_FLOW_VERSION
+			SVIGENT_TOOLS_VERSION
 		);
 	}
 

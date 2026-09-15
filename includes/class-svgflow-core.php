@@ -79,12 +79,12 @@ class SVGFlow_Core {
 	 * @return void
 	 */
 	private function load_dependencies() {
-		require_once SVG_FLOW_PATH . 'includes/class-svgflow-sanitizer.php';
-		require_once SVG_FLOW_PATH . 'includes/class-svgflow-media.php';
-		require_once SVG_FLOW_PATH . 'includes/class-svgflow-frontend.php';
+		require_once SVIGENT_TOOLS_PATH . 'includes/class-svgflow-sanitizer.php';
+		require_once SVIGENT_TOOLS_PATH . 'includes/class-svgflow-media.php';
+		require_once SVIGENT_TOOLS_PATH . 'includes/class-svgflow-frontend.php';
 
 		if ( is_admin() ) {
-			require_once SVG_FLOW_PATH . 'includes/class-svgflow-admin.php';
+			require_once SVIGENT_TOOLS_PATH . 'includes/class-svgflow-admin.php';
 		}
 	}
 
@@ -111,7 +111,7 @@ class SVGFlow_Core {
 	 * @return void
 	 */
 	private function register_hooks() {
-		add_filter( 'plugin_action_links_' . SVG_FLOW_BASENAME, array( $this, 'add_action_links' ) );
+		add_filter( 'plugin_action_links_' . SVIGENT_TOOLS_BASENAME, array( $this, 'add_action_links' ) );
 	}
 
 	/**
@@ -122,11 +122,11 @@ class SVGFlow_Core {
 	 * @return array Modified array of action links.
 	 */
 	public function add_action_links( $links ) {
-		$settings_url  = admin_url( 'options-general.php?page=svg-flow' );
+		$settings_url  = admin_url( 'options-general.php?page=svigent-tools' );
 		$settings_link = sprintf(
 			'<a href="%1$s">%2$s</a>',
 			esc_url( $settings_url ),
-			esc_html__( 'Settings', 'svg-flow' )
+			esc_html__( 'Settings', 'svigent-tools' )
 		);
 
 		array_unshift( $links, $settings_link );

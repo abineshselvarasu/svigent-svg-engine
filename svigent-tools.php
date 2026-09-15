@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       SVG Flow
- * Plugin URI:        https://wordpress.org/plugins/svg-flow/
+ * Plugin Name:       Svigent Tools
+ * Plugin URI:        https://wordpress.org/plugins/svigent-tools/
  * Description:       Safe SVG Upload & Smart Inliner. Enable safe SVG & SVGZ uploads with automated DOM sanitization, clean Media Library thumbnail previews, automatic dimension detection, and high-performance client-side inline rendering.
  * Version:           1.0.0
  * Requires at least: 6.0
@@ -9,10 +9,10 @@
  * Author:            Abinesh Selvarasu
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       svg-flow
+ * Text Domain:       svigent-tools
  * Domain Path:       /languages
  *
- * @package SVGFlow
+ * @package SvigentTools
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -20,15 +20,15 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Version.
  */
-define( 'SVG_FLOW_VERSION', '1.0.0' );
+define( 'SVIGENT_TOOLS_VERSION', '1.0.0' );
 
 /**
  * Plugin File & Directory Constants.
  */
-define( 'SVG_FLOW_FILE', __FILE__ );
-define( 'SVG_FLOW_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SVG_FLOW_URL', plugin_dir_url( __FILE__ ) );
-define( 'SVG_FLOW_BASENAME', plugin_basename( __FILE__ ) );
+define( 'SVIGENT_TOOLS_FILE', __FILE__ );
+define( 'SVIGENT_TOOLS_PATH', plugin_dir_path( __FILE__ ) );
+define( 'SVIGENT_TOOLS_URL', plugin_dir_url( __FILE__ ) );
+define( 'SVIGENT_TOOLS_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Check PHP Version Compatibility.
@@ -44,7 +44,7 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 					echo esc_html(
 						sprintf(
 							/* translators: %s: Minimum required PHP version */
-							__( 'SVGFlow requires PHP version %s or higher to run securely. Please upgrade your PHP version.', 'svg-flow' ),
+							__( 'Svigent Tools requires PHP version %s or higher to run securely. Please upgrade your PHP version.', 'svigent-tools' ),
 							'7.4'
 						)
 					);
@@ -60,24 +60,24 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 /**
  * Load Composer Autoloader for Dependencies.
  */
-if ( file_exists( SVG_FLOW_PATH . 'vendor/autoload.php' ) ) {
-	require_once SVG_FLOW_PATH . 'vendor/autoload.php';
+if ( file_exists( SVIGENT_TOOLS_PATH . 'vendor/autoload.php' ) ) {
+	require_once SVIGENT_TOOLS_PATH . 'vendor/autoload.php';
 }
 
 /**
  * Load Plugin Core Classes.
  */
-require_once SVG_FLOW_PATH . 'includes/class-svgflow-core.php';
+require_once SVIGENT_TOOLS_PATH . 'includes/class-svgflow-core.php';
 
 /**
- * Bootstrap SVGFlow.
+ * Bootstrap Svigent Tools.
  *
  * @since 1.0.0
  * @return SVGFlow_Core
  */
-function svg_flow() {
+function svigent_tools() {
 	return SVGFlow_Core::get_instance();
 }
 
 // Initialize on plugins_loaded.
-add_action( 'plugins_loaded', 'svg_flow' );
+add_action( 'plugins_loaded', 'svigent_tools' );

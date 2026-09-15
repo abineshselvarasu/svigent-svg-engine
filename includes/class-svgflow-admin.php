@@ -39,10 +39,10 @@ class SVGFlow_Admin {
 	 */
 	public function register_admin_menu() {
 		$this->page_hook = add_options_page(
-			esc_html__( 'SVGFlow Settings', 'svg-flow' ),
-			esc_html__( 'SVGFlow', 'svg-flow' ),
+			esc_html__( 'Svigent Tools Settings', 'svigent-tools' ),
+			esc_html__( 'Svigent Tools', 'svigent-tools' ),
 			'manage_options',
-			'svg-flow',
+			'svigent-tools',
 			array( $this, 'render_settings_page' )
 		);
 	}
@@ -58,9 +58,9 @@ class SVGFlow_Admin {
 		if ( $hook === $this->page_hook ) {
 			wp_enqueue_script(
 				'svg-flow-admin-js',
-				SVG_FLOW_URL . 'assets/js/admin.js',
+				SVIGENT_TOOLS_URL . 'assets/js/admin.js',
 				array(),
-				SVG_FLOW_VERSION,
+				SVIGENT_TOOLS_VERSION,
 				true
 			);
 		}
@@ -84,48 +84,48 @@ class SVGFlow_Admin {
 
 		add_settings_section(
 			'svg_flow_general_section',
-			esc_html__( 'General Configuration', 'svg-flow' ),
+			esc_html__( 'General Configuration', 'svigent-tools' ),
 			'__return_false',
-			'svg-flow'
+			'svigent-tools'
 		);
 
 		add_settings_field(
 			'upload_permission',
-			esc_html__( 'Upload Permissions', 'svg-flow' ),
+			esc_html__( 'Upload Permissions', 'svigent-tools' ),
 			array( $this, 'render_field_upload_permission' ),
-			'svg-flow',
+			'svigent-tools',
 			'svg_flow_general_section'
 		);
 
 		add_settings_field(
 			'sanitization_enabled',
-			esc_html__( 'XML / SVG Sanitization', 'svg-flow' ),
+			esc_html__( 'XML / SVG Sanitization', 'svigent-tools' ),
 			array( $this, 'render_field_sanitization' ),
-			'svg-flow',
+			'svigent-tools',
 			'svg_flow_general_section'
 		);
 
 		add_settings_field(
 			'frontend_inlining',
-			esc_html__( 'Frontend Inline Rendering', 'svg-flow' ),
+			esc_html__( 'Frontend Inline Rendering', 'svigent-tools' ),
 			array( $this, 'render_field_inlining' ),
-			'svg-flow',
+			'svigent-tools',
 			'svg_flow_general_section'
 		);
 
 		add_settings_field(
 			'inline_selector',
-			esc_html__( 'Inline Target Selector', 'svg-flow' ),
+			esc_html__( 'Inline Target Selector', 'svigent-tools' ),
 			array( $this, 'render_field_selector' ),
-			'svg-flow',
+			'svigent-tools',
 			'svg_flow_general_section'
 		);
 
 		add_settings_field(
 			'responsive_css',
-			esc_html__( 'Responsive CSS Sizing', 'svg-flow' ),
+			esc_html__( 'Responsive CSS Sizing', 'svigent-tools' ),
 			array( $this, 'render_field_responsive_css' ),
-			'svg-flow',
+			'svigent-tools',
 			'svg_flow_general_section'
 		);
 	}
@@ -176,13 +176,13 @@ class SVGFlow_Admin {
 		<fieldset class="svg-flow-radio-group">
 			<label class="svg-flow-radio-label">
 				<input type="radio" name="svg_flow_settings[upload_permission]" value="admin_only" <?php checked( $current, 'admin_only' ); ?> />
-				<strong><?php esc_html_e( 'Administrators Only (Recommended)', 'svg-flow' ); ?></strong>
-				<span class="description"><?php esc_html_e( 'Only users with administrator privileges can upload SVG files.', 'svg-flow' ); ?></span>
+				<strong><?php esc_html_e( 'Administrators Only (Recommended)', 'svigent-tools' ); ?></strong>
+				<span class="description"><?php esc_html_e( 'Only users with administrator privileges can upload SVG files.', 'svigent-tools' ); ?></span>
 			</label>
 			<label class="svg-flow-radio-label">
 				<input type="radio" name="svg_flow_settings[upload_permission]" value="all_uploaders" <?php checked( $current, 'all_uploaders' ); ?> />
-				<strong><?php esc_html_e( 'All Users with Upload Rights', 'svg-flow' ); ?></strong>
-				<span class="description"><?php esc_html_e( 'Allows Authors, Editors, and Administrators to upload sanitized SVGs.', 'svg-flow' ); ?></span>
+				<strong><?php esc_html_e( 'All Users with Upload Rights', 'svigent-tools' ); ?></strong>
+				<span class="description"><?php esc_html_e( 'Allows Authors, Editors, and Administrators to upload sanitized SVGs.', 'svigent-tools' ); ?></span>
 			</label>
 		</fieldset>
 		<?php
@@ -200,10 +200,10 @@ class SVGFlow_Admin {
 		?>
 		<label>
 			<input type="checkbox" name="svg_flow_settings[sanitization_enabled]" value="1" <?php checked( $checked, true ); ?> />
-			<?php esc_html_e( 'Enable automatic XML sanitization upon upload', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Enable automatic XML sanitization upon upload', 'svigent-tools' ); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e( 'Strips malicious scripts, inline JavaScript handlers, and XML vulnerabilities. Keep enabled for maximum security.', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Strips malicious scripts, inline JavaScript handlers, and XML vulnerabilities. Keep enabled for maximum security.', 'svigent-tools' ); ?>
 		</p>
 		<?php
 	}
@@ -220,10 +220,10 @@ class SVGFlow_Admin {
 		?>
 		<label>
 			<input type="checkbox" name="svg_flow_settings[frontend_inlining]" value="1" <?php checked( $checked, true ); ?> />
-			<?php esc_html_e( 'Enable client-side inline SVG replacement', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Enable client-side inline SVG replacement', 'svigent-tools' ); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e( 'Replaces matching <img> elements with direct <svg> code on the frontend for dynamic CSS styling and animations.', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Replaces matching <img> elements with direct <svg> code on the frontend for dynamic CSS styling and animations.', 'svigent-tools' ); ?>
 		</p>
 		<?php
 	}
@@ -240,7 +240,7 @@ class SVGFlow_Admin {
 		?>
 		<input type="text" name="svg_flow_settings[inline_selector]" value="<?php echo esc_attr( $selector ); ?>" class="regular-text code" />
 		<p class="description">
-			<?php esc_html_e( 'CSS selector targeting the <img> elements you want to inline (e.g., img.style-svg, img.svg-flow).', 'svg-flow' ); ?>
+			<?php esc_html_e( 'CSS selector targeting the <img> elements you want to inline (e.g., img.style-svg, img.svg-flow).', 'svigent-tools' ); ?>
 		</p>
 		<?php
 	}
@@ -257,10 +257,10 @@ class SVGFlow_Admin {
 		?>
 		<label>
 			<input type="checkbox" name="svg_flow_settings[responsive_css]" value="1" <?php checked( $checked, true ); ?> />
-			<?php esc_html_e( 'Add basic responsive CSS rules', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Add basic responsive CSS rules', 'svigent-tools' ); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e( 'Applies max-width: 100% and height: auto to prevent SVGs from overflowing their container.', 'svg-flow' ); ?>
+			<?php esc_html_e( 'Applies max-width: 100% and height: auto to prevent SVGs from overflowing their container.', 'svigent-tools' ); ?>
 		</p>
 		<?php
 	}
@@ -273,7 +273,7 @@ class SVGFlow_Admin {
 	 */
 	public function render_settings_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'svg-flow' ) );
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'svigent-tools' ) );
 		}
 
 		$settings       = SVGFlow_Core::get_settings();
@@ -290,17 +290,17 @@ class SVGFlow_Admin {
 		<div class="wrap svg-flow-wrap">
 			<div class="svg-flow-header">
 				<div class="svg-flow-header-title">
-					<h1><?php esc_html_e( 'SVGFlow', 'svg-flow' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVG_FLOW_VERSION ); ?></span></h1>
-					<p class="svg-flow-subtitle"><?php esc_html_e( 'Safe SVG Upload & Smart Inliner Engine', 'svg-flow' ); ?></p>
+					<h1><?php esc_html_e( 'Svigent Tools', 'svigent-tools' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVIGENT_TOOLS_VERSION ); ?></span></h1>
+					<p class="svg-flow-subtitle"><?php esc_html_e( 'Safe SVG Upload & Smart Inliner Engine', 'svigent-tools' ); ?></p>
 				</div>
 				<div class="svg-flow-status-badge <?php echo esc_attr( $is_sanitizing ? 'status-active' : 'status-warning' ); ?>">
 					<span class="status-dot"></span>
 					<span class="status-text">
 						<?php
 						if ( $is_sanitizing ) {
-							esc_html_e( 'Sanitization: Active & Secure', 'svg-flow' );
+							esc_html_e( 'Sanitization: Active & Secure', 'svigent-tools' );
 						} else {
-							esc_html_e( 'Sanitization: Disabled', 'svg-flow' );
+							esc_html_e( 'Sanitization: Disabled', 'svigent-tools' );
 						}
 						?>
 					</span>
@@ -313,35 +313,37 @@ class SVGFlow_Admin {
 						<form action="options.php" method="post">
 							<?php
 							settings_fields( 'svg_flow_settings_group' );
-							do_settings_sections( 'svg-flow' );
-							submit_button( esc_html__( 'Save Changes', 'svg-flow' ), 'primary' );
+							do_settings_sections( 'svigent-tools' );
+							submit_button();
 							?>
 						</form>
 					</div>
 				</div>
 
-				<div class="svg-flow-sidebar-column">
-					<div class="svg-flow-card svg-flow-helper-card">
-						<h3><?php esc_html_e( 'Quick Inlining Guide', 'svg-flow' ); ?></h3>
-						<p><?php esc_html_e( 'To render an SVG inline on your website, add this CSS class to any Image element:', 'svg-flow' ); ?></p>
-						
-						<div class="svg-flow-copy-box">
-							<code id="svg-flow-class-code"><?php echo esc_html( $first_selector ); ?></code>
-							<button type="button" class="button button-secondary svg-flow-copy-btn" data-target="svg-flow-class-code">
-								<span class="dashicons dashicons-clipboard"></span> <?php esc_html_e( 'Copy Class', 'svg-flow' ); ?>
+				<div class="svg-flow-sidebar">
+					<div class="svg-flow-card">
+						<h3><?php esc_html_e( 'Quick Inlining Guide', 'svigent-tools' ); ?></h3>
+						<p class="description">
+							<?php esc_html_e( 'To render an SVG inline on your website, add this CSS class to any Image element:', 'svigent-tools' ); ?>
+						</p>
+						<div class="svg-flow-selector-box">
+							<code id="svg-flow-target-class"><?php echo esc_html( $first_selector ); ?></code>
+							<button type="button" class="button button-secondary svg-flow-copy-btn" data-target="svg-flow-target-class">
+								<span class="dashicons dashicons-admin-page"></span> <?php esc_html_e( 'Copy Class', 'svigent-tools' ); ?>
 							</button>
 						</div>
-
 						<ul class="svg-flow-guide-list">
-							<li><strong><?php esc_html_e( 'Block Editor (Gutenberg):', 'svg-flow' ); ?></strong> <?php esc_html_e( 'Select the Image block → Advanced → Additional CSS class(es).', 'svg-flow' ); ?></li>
-							<li><strong><?php esc_html_e( 'Page Builders:', 'svg-flow' ); ?></strong> <?php esc_html_e( 'Add the class in Elementor, Divi, or Beaver Builder image settings.', 'svg-flow' ); ?></li>
-							<li><strong><?php esc_html_e( 'CSS Styling:', 'svg-flow' ); ?></strong> <?php esc_html_e( 'Target elements inside inline SVGs using fill: currentColor or CSS hover transitions.', 'svg-flow' ); ?></li>
+							<li><strong><?php esc_html_e( 'Block Editor (Gutenberg):', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Select the Image block → Advanced → Additional CSS class(es).', 'svigent-tools' ); ?></li>
+							<li><strong><?php esc_html_e( 'Page Builders:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Add the class in Elementor, Divi, or Beaver Builder image settings.', 'svigent-tools' ); ?></li>
+							<li><strong><?php esc_html_e( 'CSS Styling:', 'svigent-tools' ); ?></strong> <?php esc_html_e( 'Target elements inside inline SVGs using fill: currentColor or CSS hover transitions.', 'svigent-tools' ); ?></li>
 						</ul>
 					</div>
 
-					<div class="svg-flow-card svg-flow-security-card">
-						<h3><?php esc_html_e( 'Security Standards', 'svg-flow' ); ?></h3>
-						<p><?php esc_html_e( 'SVGFlow protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svg-flow' ); ?></p>
+					<div class="svg-flow-card">
+						<h3><?php esc_html_e( 'Security Standards', 'svigent-tools' ); ?></h3>
+						<p class="description">
+							<?php esc_html_e( 'Svigent Tools protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
+						</p>
 					</div>
 				</div>
 			</div>

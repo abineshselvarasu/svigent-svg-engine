@@ -131,7 +131,7 @@ class SVGFlow_Sanitizer {
 
 		// Verify permission.
 		if ( ! $this->can_user_upload() ) {
-			$file['error'] = esc_html__( 'Sorry, you do not have permission to upload SVG files.', 'svg-flow' );
+			$file['error'] = esc_html__( 'Sorry, you do not have permission to upload SVG files.', 'svigent-tools' );
 			return $file;
 		}
 
@@ -145,7 +145,7 @@ class SVGFlow_Sanitizer {
 		$sanitized = $this->sanitize_file( $file['tmp_name'] );
 
 		if ( ! $sanitized ) {
-			$file['error'] = esc_html__( 'Security Notice: This SVG file contains invalid or unsafe XML and could not be uploaded.', 'svg-flow' );
+			$file['error'] = esc_html__( 'Security Notice: This SVG file contains invalid or unsafe XML and could not be uploaded.', 'svigent-tools' );
 			return $file;
 		}
 
