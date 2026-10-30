@@ -1,11 +1,15 @@
 # Svigent SVG Engine
 
+[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/svigent-tools.svg)](https://wordpress.org/plugins/svigent-tools/)
+[![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/stars/svigent-tools.svg)](https://wordpress.org/plugins/svigent-tools/#reviews)
 [![Required WP Version](https://img.shields.io/badge/WordPress-6.0%2B-blue.svg)](https://wordpress.org)
 [![Required PHP Version](https://img.shields.io/badge/Requires%20PHP-7.4%2B-777bb4.svg)](https://php.net)
 [![GPLv2 License](https://img.shields.io/badge/License-GPLv2%2B-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Plugin Check](https://img.shields.io/badge/Plugin%20Check-100%25%20Clean-brightgreen.svg)](https://wordpress.org/plugins/plugin-check/)
 
-A lightweight, modern, and secure WordPress plugin that enables SVG uploads and provides high-performance client-side inline rendering for vector graphics.
+Upload SVG files to WordPress safely. **Svigent SVG Engine** sanitizes every SVG and SVGZ upload, fixes Media Library previews, and turns SVG images into inline SVG you can style with CSS.
+
+**[Download Svigent SVG Engine from WordPress.org →](https://wordpress.org/plugins/svigent-tools/)**
 
 > **Development Repository**
 >
@@ -46,7 +50,7 @@ A lightweight, modern, and secure WordPress plugin that enables SVG uploads and 
 
 1. Clone or download the repository into your WordPress plugins directory:
    ```bash
-   git clone https://github.com/your-username/svigent-tools.git wp-content/plugins/svigent-tools
+   git clone https://github.com/abineshselvarasu/svg-plugin.git wp-content/plugins/svigent-tools
    ```
 2. Activate **Svigent SVG Engine** in **WordPress Admin → Plugins**.
 3. Go to **Settings → Svigent SVG Engine** to configure permissions and enable inlining.
@@ -65,3 +69,9 @@ A lightweight, modern, and secure WordPress plugin that enables SVG uploads and 
 ## License
 
 Svigent SVG Engine is open-source software licensed under the [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html).
+
+---
+
+## Author
+
+Built by [Abinesh Selvarasu](https://www.abineshspotlight.online). Found a bug or have an idea? [Open an issue](https://github.com/abineshselvarasu/svg-plugin/issues) or ask on the [WordPress.org support forum](https://wordpress.org/support/plugin/svigent-tools/).
