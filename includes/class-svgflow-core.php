@@ -1,8 +1,8 @@
 <?php
 /**
- * Core coordinator class for SVGFlow.
+ * Core coordinator class for Svigent SVG Engine.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 

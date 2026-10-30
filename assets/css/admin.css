@@ -1,42 +1,9 @@
 /**
- * Admin UI and Media Library stylesheet for SVGFlow.
+ * Settings screen styles for Svigent SVG Engine.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
-
-/* ==========================================================================
-   1. Media Library & Thumbnail Fixes
-   ========================================================================== */
-
-.attachment-preview .thumbnail img[src$=".svg"],
-.attachment-preview .thumbnail img[src*=".svg?"],
-.attachment-preview .thumbnail img[src$=".svgz"],
-.attachment-preview .thumbnail img[src*=".svgz?"],
-.media-icon img[src$=".svg"],
-.media-icon img[src*=".svg?"],
-.media-icon img[src$=".svgz"],
-.media-icon img[src*=".svgz?"] {
-	width: 100% !important;
-	height: auto !important;
-	max-height: 100% !important;
-	object-fit: contain;
-}
-
-/* Attachment Details Modal Preview */
-.attachment-details .thumbnail img[src$=".svg"],
-.attachment-details .thumbnail img[src*=".svg?"],
-.attachment-details .thumbnail img[src$=".svgz"],
-.attachment-details .thumbnail img[src*=".svgz?"] {
-	max-width: 100% !important;
-	height: auto !important;
-}
-
-/* Featured Image Meta Box Container */
-.svg-flow-featured-thumb img {
-	width: 100% !important;
-	height: auto !important;
-}
 
 /* ==========================================================================
    2. Settings Screen Layout & Header
@@ -112,12 +79,6 @@
 	border: 1px solid #c7e8ca;
 }
 
-.svg-flow-status-badge.status-warning {
-	background: #fff8e5;
-	color: #8a5700;
-	border: 1px solid #f7dfa5;
-}
-
 .status-dot {
 	width: 9px;
 	height: 9px;
@@ -129,11 +90,6 @@
 .status-active .status-dot {
 	background-color: #2e7d32;
 	box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
-}
-
-.status-warning .status-dot {
-	background-color: #f57c00;
-	box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.2);
 }
 
 /* ==========================================================================
@@ -389,8 +345,6 @@
 /* ==========================================================================
    6. Responsive Breakpoints
    ========================================================================== */
-
-
 
 /* Standard WordPress Mobile Breakpoint (<= 782px) */
 @media (max-width: 782px) {

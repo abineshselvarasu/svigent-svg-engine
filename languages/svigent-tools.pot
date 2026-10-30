@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Svigent SVG Engine 1.0.2\n"
+"Project-Id-Version: Svigent SVG Engine 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/svigent-tools\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-30T08:50:30+00:00\n"
+"POT-Creation-Date: 2026-10-30T09:09:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: svigent-tools\n"
@@ -17,7 +17,7 @@ msgstr ""
 #. Plugin Name of the plugin
 #: svigent-tools.php
 #: includes/class-svgflow-admin.php:43
-#: includes/class-svgflow-admin.php:290
+#: includes/class-svgflow-admin.php:299
 msgid "Svigent SVG Engine"
 msgstr ""
 
@@ -45,127 +45,131 @@ msgstr ""
 msgid "Svigent SVG Engine Settings"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:87
+#: includes/class-svgflow-admin.php:95
 msgid "General Configuration"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:94
+#: includes/class-svgflow-admin.php:102
 msgid "Upload Permissions"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:102
+#: includes/class-svgflow-admin.php:110
 msgid "XML / SVG Sanitization"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:110
+#: includes/class-svgflow-admin.php:118
 msgid "Frontend Inline Rendering"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:118
+#: includes/class-svgflow-admin.php:126
 msgid "Inline Target Selector"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:126
+#: includes/class-svgflow-admin.php:134
 msgid "Responsive CSS Sizing"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:177
+#: includes/class-svgflow-admin.php:186
 msgid "Administrators Only (Recommended)"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:178
+#: includes/class-svgflow-admin.php:187
 msgid "Only users with administrator privileges can upload SVG files."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:184
+#: includes/class-svgflow-admin.php:193
 msgid "All Users with Upload Rights"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:185
+#: includes/class-svgflow-admin.php:194
 msgid "Allows Authors, Editors, and Administrators to upload sanitized SVGs."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:202
+#: includes/class-svgflow-admin.php:211
 msgid "Always on"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:204
+#: includes/class-svgflow-admin.php:213
 msgid "Every SVG and SVGZ upload is sanitized: malicious scripts, inline JavaScript handlers, remote references, and XML vulnerabilities are stripped before the file is saved."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:221
+#: includes/class-svgflow-admin.php:230
 msgid "Enable client-side inline SVG replacement"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:224
+#: includes/class-svgflow-admin.php:233
 msgid "Replaces matching <img> elements with direct <svg> code on the frontend for dynamic CSS styling and animations."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:241
+#: includes/class-svgflow-admin.php:250
 msgid "CSS selector targeting the <img> elements you want to inline (e.g., img.style-svg, img.svg-flow)."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:258
+#: includes/class-svgflow-admin.php:267
 msgid "Add basic responsive CSS rules"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:261
+#: includes/class-svgflow-admin.php:270
 msgid "Applies max-width: 100% and height: auto to prevent SVGs from overflowing their container."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:274
+#: includes/class-svgflow-admin.php:283
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:291
+#: includes/class-svgflow-admin.php:300
 msgid "Safe SVG Upload & Smart Inliner Engine"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:295
+#: includes/class-svgflow-admin.php:304
 msgid "Sanitization: Active & Secure"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:312
+#: includes/class-svgflow-admin.php:321
 msgid "Quick Inlining Guide"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:314
+#: includes/class-svgflow-admin.php:323
 msgid "To render an SVG inline on your website, add this CSS class to any Image element:"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:319
+#: includes/class-svgflow-admin.php:327
+msgid "Copied!"
+msgstr ""
+
+#: includes/class-svgflow-admin.php:328
 msgid "Copy"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:323
+#: includes/class-svgflow-admin.php:332
 msgid "Block Editor (Gutenberg):"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:323
+#: includes/class-svgflow-admin.php:332
 msgid "Select the Image block → Advanced → Additional CSS class(es)."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:324
+#: includes/class-svgflow-admin.php:333
 msgid "Page Builders:"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:324
+#: includes/class-svgflow-admin.php:333
 msgid "Add the class in Elementor, Divi, or Beaver Builder image settings."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:325
+#: includes/class-svgflow-admin.php:334
 msgid "CSS Styling:"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:325
+#: includes/class-svgflow-admin.php:334
 msgid "Target elements inside inline SVGs using fill: currentColor or CSS hover transitions."
 msgstr ""
 
-#: includes/class-svgflow-admin.php:330
+#: includes/class-svgflow-admin.php:339
 msgid "Security Standards"
 msgstr ""
 
-#: includes/class-svgflow-admin.php:332
+#: includes/class-svgflow-admin.php:341
 msgid "Svigent SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection."
 msgstr ""
 
@@ -173,16 +177,10 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/class-svgflow-sanitizer.php:145
+#: includes/class-svgflow-sanitizer.php:169
 msgid "Sorry, you do not have permission to upload SVG files."
 msgstr ""
 
-#: includes/class-svgflow-sanitizer.php:153
+#: includes/class-svgflow-sanitizer.php:174
 msgid "Security Notice: This SVG file contains invalid or unsafe XML and could not be uploaded."
-msgstr ""
-
-#. translators: %s: Minimum required PHP version
-#: svigent-tools.php:48
-#, php-format
-msgid "Svigent SVG Engine requires PHP version %s or higher to run securely. Please upgrade your PHP version."
 msgstr ""

@@ -1,23 +1,19 @@
 /**
- * High-performance Vanilla JS SVG Inliner for SVGFlow.
+ * Inline SVG engine: swaps matching <img> tags for sanitized inline <svg> markup.
  *
- * Features:
- * - Zero external dependencies
- * - Only inlines SVGs from trusted locations, with active content stripped
- * - In-memory request deduplication & caching
- * - MutationObserver for AJAX, Gutenberg, and page builders
- * - Full attribute, CSS class, and accessibility preservation
+ * Only SVGs from trusted locations are fetched, each URL is fetched once,
+ * and a MutationObserver picks up images added later (AJAX, sliders, block editor).
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
 ( function() {
 	'use strict';
 
-	var config   = window.svgFlowConfig || {};
+	var config      = window.svgFlowConfig || {};
 	var rawSelector = config.selector || 'style-svg, svg-flow';
-	
+
 	// Smart selector builder: supports 'style-svg', '.style-svg', 'img.style-svg', and parent containers like '<figure class="style-svg">'
 	function getResolvedSelector( raw ) {
 		var parts = raw.split( ',' );
@@ -49,6 +45,7 @@
 
 	var selector = getResolvedSelector( rawSelector );
 	var svgCache = new Map();
+	var skipped  = new WeakMap();
 
 	// Base URLs (host + path prefix) SVGs may be fetched from. Scheme is ignored so http/https mixes still match.
 	var allowedBases = ( config.allowedUrls || [] ).map( function( base ) {
@@ -136,87 +133,77 @@
 	}
 
 	/**
+	 * Fetch an SVG once per URL. Failed requests stay cached so they are not retried on every DOM change.
+	 *
+	 * @param {string} src Absolute, trusted URL.
+	 * @return {Promise<string>} SVG source text.
+	 */
+	function loadSvg( src ) {
+		if ( ! svgCache.has( src ) ) {
+			svgCache.set( src, fetch( src, { credentials: 'same-origin' } ).then( function( response ) {
+				if ( ! response.ok ) {
+					throw new Error( response.status );
+				}
+				return response.text();
+			} ) );
+		}
+
+		return svgCache.get( src );
+	}
+
+	/**
 	 * Inline a single <img> element with its SVG content.
 	 *
 	 * @param {HTMLImageElement} img The image element to replace.
 	 */
 	function inlineSvg( img ) {
-		// Prevent double processing.
-		if ( img.dataset.svgFlowProcessing || img.classList.contains( 'svg-flow-inlined' ) ) {
-			return;
-		}
-
 		var rawSrc = img.getAttribute( 'src' );
-		if ( ! rawSrc || rawSrc.indexOf( '.svg' ) === -1 ) {
+
+		if ( ! rawSrc || img.dataset.svgFlowProcessing || skipped.get( img ) === rawSrc ) {
 			return;
 		}
 
-		var src = resolveTrustedUrl( rawSrc );
+		var src = rawSrc.indexOf( '.svg' ) !== -1 ? resolveTrustedUrl( rawSrc ) : null;
 		if ( ! src ) {
+			skipped.set( img, rawSrc );
 			return;
 		}
 
 		img.dataset.svgFlowProcessing = 'true';
 
-		var fetchPromise;
-
-		if ( svgCache.has( src ) ) {
-			fetchPromise = Promise.resolve( svgCache.get( src ) );
-		} else {
-			fetchPromise = fetch( src, { credentials: 'same-origin' } )
-				.then( function( response ) {
-					if ( ! response.ok ) {
-						throw new Error( 'Network response was not ok' );
-					}
-					return response.text();
-				} )
-				.then( function( rawSvg ) {
-					svgCache.set( src, rawSvg );
-					return rawSvg;
-				} );
-		}
-
-		fetchPromise
+		loadSvg( src )
 			.then( function( svgText ) {
-				var parser  = new DOMParser();
-				var doc     = parser.parseFromString( svgText, 'image/svg+xml' );
-				var svgElem = doc.querySelector( 'svg' );
+				var doc     = new DOMParser().parseFromString( svgText, 'image/svg+xml' );
+				var svgElem = doc.documentElement;
 
-				if ( ! svgElem || doc.querySelector( 'parsererror' ) ) {
-					return;
+				if ( ! svgElem || svgElem.localName !== 'svg' || doc.querySelector( 'parsererror' ) ) {
+					throw new Error( 'invalid' );
 				}
 
 				scrubSvg( svgElem );
 
-				// Copy ID if present.
 				if ( img.id ) {
 					svgElem.id = img.id;
 				}
 
-				// Copy and merge CSS classes.
-				var existingClasses = ( img.getAttribute( 'class' ) || '' ).split( /\s+/ );
-				existingClasses.forEach( function( cls ) {
-					if ( cls && cls !== 'svg-flow-processing' ) {
+				( img.getAttribute( 'class' ) || '' ).split( /\s+/ ).forEach( function( cls ) {
+					if ( cls ) {
 						svgElem.classList.add( cls );
 					}
 				} );
 				svgElem.classList.add( 'svg-flow-inlined' );
 
-				// Copy inline styles.
 				var imgStyle = img.getAttribute( 'style' );
 				if ( imgStyle ) {
-					var currentSvgStyle = svgElem.getAttribute( 'style' ) || '';
-					svgElem.setAttribute( 'style', currentSvgStyle + ';' + imgStyle );
+					svgElem.setAttribute( 'style', ( svgElem.getAttribute( 'style' ) || '' ) + ';' + imgStyle );
 				}
 
-				// Copy data attributes.
 				Array.prototype.slice.call( img.attributes ).forEach( function( attr ) {
-					if ( attr.name.indexOf( 'data-' ) === 0 ) {
+					if ( attr.name.indexOf( 'data-' ) === 0 && attr.name.indexOf( 'data-svg-flow' ) !== 0 ) {
 						svgElem.setAttribute( attr.name, attr.value );
 					}
 				} );
 
-				// Preserve Accessibility: role, aria-label, alt title.
 				if ( ! svgElem.getAttribute( 'role' ) ) {
 					svgElem.setAttribute( 'role', 'img' );
 				}
@@ -228,42 +215,27 @@
 					svgElem.insertBefore( titleTag, svgElem.firstChild );
 				}
 
-				// Inherit class from parent container if parent was targeted.
-				if ( img.parentElement && img.parentElement.classList ) {
-					Array.prototype.slice.call( img.parentElement.classList ).forEach( function( parentCls ) {
-						if ( parentCls === 'style-svg' || parentCls === 'svg-flow' ) {
-							svgElem.classList.add( parentCls );
+				// Keep the trigger class when it was set on a wrapper rather than the image.
+				if ( img.parentElement ) {
+					[ 'style-svg', 'svg-flow' ].forEach( function( cls ) {
+						if ( img.parentElement.classList.contains( cls ) ) {
+							svgElem.classList.add( cls );
 						}
 					} );
 				}
 
-				// Replace image node with SVG.
 				if ( img.parentNode ) {
 					img.parentNode.replaceChild( svgElem, img );
-
-					// Dispatch custom event for theme and third-party JS integration.
-					var event;
-					if ( typeof CustomEvent === 'function' ) {
-						event = new CustomEvent( 'svgflow:inlined', {
-							bubbles: true,
-							detail: {
-								svg: svgElem,
-								src: src
-							}
-						} );
-					} else {
-						event = document.createEvent( 'CustomEvent' );
-						event.initCustomEvent( 'svgflow:inlined', true, true, {
-							svg: svgElem,
-							src: src
-						} );
-					}
-					svgElem.dispatchEvent( event );
+					svgElem.dispatchEvent( new CustomEvent( 'svgflow:inlined', {
+						bubbles: true,
+						detail: { svg: svgElem, src: src }
+					} ) );
 				}
 			} )
-			.catch( function( err ) {
-				// Remove processing lock so fallback image remains functional.
+			.catch( function() {
+				// Leave the original <img> in place and do not retry this URL.
 				delete img.dataset.svgFlowProcessing;
+				skipped.set( img, rawSrc );
 			} );
 	}
 

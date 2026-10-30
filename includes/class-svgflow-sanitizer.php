@@ -1,8 +1,8 @@
 <?php
 /**
- * Sanitization and MIME validation module for SVGFlow.
+ * Sanitization and MIME validation module for Svigent SVG Engine.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
@@ -102,23 +102,48 @@ class SVGFlow_Sanitizer {
 	 * @param  array  $mimes    Allowed MIME types array.
 	 * @return array
 	 */
-	public function filter_filetype_and_ext( $data, $file, $filename, $mimes ) {
-		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
+	public function filter_filetype_and_ext( $data, $file, $filename, $mimes ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		$ext = strtolower( pathinfo( (string) $filename, PATHINFO_EXTENSION ) );
 
-		if ( empty( $ext ) && ! empty( $filename ) ) {
-			$path_info = pathinfo( $filename );
-			$ext       = isset( $path_info['extension'] ) ? strtolower( $path_info['extension'] ) : '';
+		if ( ! in_array( $ext, array( 'svg', 'svgz' ), true ) || ! $this->can_user_upload() ) {
+			return $data;
 		}
 
-		if ( 'svg' === $ext ) {
-			$data['type'] = 'image/svg+xml';
-			$data['ext']  = 'svg';
-		} elseif ( 'svgz' === $ext ) {
-			$data['type'] = 'image/svg+xml';
-			$data['ext']  = 'svgz';
+		// Only vouch for the file when its bytes really are SVG (or gzip for .svgz).
+		if ( ! $this->looks_like_svg( $file, $ext ) ) {
+			return $data;
 		}
+
+		$data['type'] = 'image/svg+xml';
+		$data['ext']  = $ext;
 
 		return $data;
+	}
+
+	/**
+	 * Check a file's content matches its SVG/SVGZ extension.
+	 *
+	 * @since  1.0.3
+	 * @param  string $file_path Path to the file.
+	 * @param  string $ext       'svg' or 'svgz'.
+	 * @return bool
+	 */
+	protected function looks_like_svg( $file_path, $ext ) {
+		if ( ! is_string( $file_path ) || ! is_readable( $file_path ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$head = file_get_contents( $file_path, false, null, 0, 4096 );
+		if ( false === $head ) {
+			return false;
+		}
+
+		if ( 'svgz' === $ext ) {
+			return self::is_gzipped( $head );
+		}
+
+		return false !== stripos( $head, '<svg' );
 	}
 
 	/**
@@ -140,19 +165,18 @@ class SVGFlow_Sanitizer {
 			return $file;
 		}
 
-		// Verify permission.
 		if ( ! $this->can_user_upload() ) {
 			$file['error'] = esc_html__( 'Sorry, you do not have permission to upload SVG files.', 'svigent-tools' );
 			return $file;
 		}
 
-		// Sanitization always runs; it cannot be switched off since 1.0.2.
-		$sanitized = $this->sanitize_file( $file['tmp_name'] );
-
-		if ( ! $sanitized ) {
+		if ( ! $this->sanitize_file( $file['tmp_name'] ) ) {
 			$file['error'] = esc_html__( 'Security Notice: This SVG file contains invalid or unsafe XML and could not be uploaded.', 'svigent-tools' );
 			return $file;
 		}
+
+		clearstatcache( true, $file['tmp_name'] );
+		$file['size'] = filesize( $file['tmp_name'] );
 
 		return $file;
 	}
@@ -178,6 +202,12 @@ class SVGFlow_Sanitizer {
 		}
 
 		// Read file content safely.
+		clearstatcache( true, $file_path );
+		$size = filesize( $file_path );
+		if ( false === $size || $size > self::max_size() ) {
+			return false;
+		}
+
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		$raw_content = file_get_contents( $file_path );
 
@@ -185,18 +215,15 @@ class SVGFlow_Sanitizer {
 			return false;
 		}
 
-		$is_gzipped = $this->is_gzipped( $raw_content );
+		$is_gzipped = self::is_gzipped( $raw_content );
 
 		if ( $is_gzipped ) {
-			$raw_content = $this->inflate( $raw_content );
+			$raw_content = self::inflate( $raw_content );
 			if ( false === $raw_content ) {
 				return false;
 			}
 		}
 
-		/**
-		 * Configure Sanitizer options.
-		 */
 		$this->sanitizer->removeXMLTag( true );
 		$this->sanitizer->minify( false );
 		$this->sanitizer->removeRemoteReferences( true );
@@ -263,16 +290,15 @@ class SVGFlow_Sanitizer {
 
 		$clean_content = $this->sanitizer->sanitize( $raw_content );
 
-		if ( false === $clean_content || '' === trim( $clean_content ) ) {
+		// Anything that is not an <svg> document after cleaning is rejected outright.
+		if ( ! is_string( $clean_content ) || false === stripos( $clean_content, '<svg' ) ) {
 			return false;
 		}
 
-		// Re-encode if original file was gzipped.
 		if ( $is_gzipped ) {
 			$clean_content = gzencode( $clean_content );
 		}
 
-		// Write sanitized content back to temporary file.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		$result = file_put_contents( $file_path, $clean_content );
 
@@ -288,18 +314,12 @@ class SVGFlow_Sanitizer {
 	 * @param  string $compressed Gzip-encoded content.
 	 * @return string|false Decompressed content, or false if invalid or too large.
 	 */
-	protected function inflate( $compressed ) {
+	public static function inflate( $compressed ) {
 		if ( ! function_exists( 'inflate_init' ) ) {
 			return false;
 		}
 
-		/**
-		 * Filters the maximum size (in bytes) an .svgz upload may decompress to.
-		 *
-		 * @since 1.0.2
-		 * @param int $max_size Maximum inflated size in bytes. Default 10 MB.
-		 */
-		$max_size = (int) apply_filters( 'svg_flow_max_inflated_size', self::DEFAULT_MAX_INFLATED_SIZE );
+		$max_size = self::max_size();
 
 		$context = inflate_init( ZLIB_ENCODING_GZIP );
 		if ( false === $context ) {
@@ -332,16 +352,29 @@ class SVGFlow_Sanitizer {
 	}
 
 	/**
-	 * Check if binary string matches GZIP compression header.
+	 * Maximum size (in bytes) an SVG may have, or an .svgz may decompress to.
+	 *
+	 * @since  1.0.3
+	 * @return int
+	 */
+	public static function max_size() {
+		/**
+		 * Filters the maximum SVG size in bytes, also used as the .svgz decompression limit.
+		 *
+		 * @since 1.0.2
+		 * @param int $max_size Maximum size in bytes. Default 10 MB.
+		 */
+		return (int) apply_filters( 'svg_flow_max_inflated_size', self::DEFAULT_MAX_INFLATED_SIZE );
+	}
+
+	/**
+	 * Check if binary string starts with a GZIP header.
 	 *
 	 * @since  1.0.0
 	 * @param  string $content Raw file content.
 	 * @return bool
 	 */
-	public function is_gzipped( $content ) {
-		if ( function_exists( 'mb_strpos' ) ) {
-			return 0 === mb_strpos( $content, "\x1f\x8b\x08" );
-		}
-		return 0 === strpos( $content, "\x1f\x8b\x08" );
+	public static function is_gzipped( $content ) {
+		return 0 === strncmp( $content, "\x1f\x8b\x08", 3 );
 	}
 }

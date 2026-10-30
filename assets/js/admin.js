@@ -1,58 +1,61 @@
 /**
- * Admin JavaScript interactions for SVGFlow.
+ * Settings screen copy-to-clipboard button.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
 document.addEventListener( 'DOMContentLoaded', function() {
-	var copyButtons = document.querySelectorAll( '.svg-flow-copy-btn' );
-
-	copyButtons.forEach( function( btn ) {
+	document.querySelectorAll( '.svg-flow-copy-btn' ).forEach( function( btn ) {
 		btn.addEventListener( 'click', function() {
-			var targetId = this.getAttribute( 'data-target' );
-			var targetEl = document.getElementById( targetId );
+			var targetEl = document.getElementById( btn.getAttribute( 'data-target' ) );
 
 			if ( ! targetEl ) {
 				return;
 			}
 
-			var textToCopy = targetEl.textContent || targetEl.innerText;
+			var text = targetEl.textContent.trim();
 
 			if ( navigator.clipboard && navigator.clipboard.writeText ) {
-				navigator.clipboard.writeText( textToCopy.trim() ).then( function() {
+				navigator.clipboard.writeText( text ).then( function() {
 					showCopiedState( btn );
 				} ).catch( function() {
-					fallbackCopy( textToCopy, btn );
+					fallbackCopy( text, btn );
 				} );
 			} else {
-				fallbackCopy( textToCopy, btn );
+				fallbackCopy( text, btn );
 			}
 		} );
 	} );
 
 	function showCopiedState( btn ) {
-		var originalText = btn.innerHTML;
+		var original = Array.prototype.slice.call( btn.childNodes );
+		var icon     = document.createElement( 'span' );
+
+		icon.className = 'dashicons dashicons-yes';
 		btn.classList.add( 'copied' );
-		btn.innerHTML = '<span class="dashicons dashicons-yes"></span> Copied!';
+		btn.replaceChildren( icon, document.createTextNode( ' ' + ( btn.getAttribute( 'data-copied-label' ) || 'Copied!' ) ) );
 
 		setTimeout( function() {
 			btn.classList.remove( 'copied' );
-			btn.innerHTML = originalText;
+			btn.replaceChildren.apply( btn, original );
 		}, 2000 );
 	}
 
 	function fallbackCopy( text, btn ) {
 		var tempInput = document.createElement( 'input' );
-		tempInput.value = text.trim();
+
+		tempInput.value = text;
 		document.body.appendChild( tempInput );
 		tempInput.select();
+
 		try {
 			document.execCommand( 'copy' );
 			showCopiedState( btn );
 		} catch ( err ) {
-			// Fallback silently if clipboard unavailable.
+			// Clipboard unavailable; nothing else to do.
 		}
+
 		document.body.removeChild( tempInput );
 	}
 } );

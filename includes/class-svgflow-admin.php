@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin settings and management screen module for SVGFlow.
+ * Admin settings and management screen module for Svigent SVG Engine.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
@@ -48,7 +48,7 @@ class SVGFlow_Admin {
 	}
 
 	/**
-	 * Enqueue admin script for interactive copy buttons on the settings screen.
+	 * Enqueue settings screen styles and the copy-button script.
 	 *
 	 * @since  1.0.0
 	 * @param  string $hook Current admin screen hook.
@@ -56,6 +56,13 @@ class SVGFlow_Admin {
 	 */
 	public function enqueue_admin_scripts( $hook ) {
 		if ( $hook === $this->page_hook ) {
+			wp_enqueue_style(
+				'svg-flow-admin',
+				SVIGENT_TOOLS_URL . 'assets/css/admin.css',
+				array(),
+				SVIGENT_TOOLS_VERSION
+			);
+
 			wp_enqueue_script(
 				'svg-flow-admin-js',
 				SVIGENT_TOOLS_URL . 'assets/js/admin.js',
@@ -77,6 +84,7 @@ class SVGFlow_Admin {
 			'svg_flow_settings_group',
 			'svg_flow_settings',
 			array(
+				'type'              => 'array',
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 				'default'           => SVGFlow_Core::get_settings(),
 			)
@@ -138,6 +146,7 @@ class SVGFlow_Admin {
 	 * @return array Sanitized settings.
 	 */
 	public function sanitize_settings( $input ) {
+		$input     = is_array( $input ) ? $input : array();
 		$sanitized = array();
 
 		// Upload Permission: must be 'admin_only' or 'all_uploaders'.
@@ -149,10 +158,10 @@ class SVGFlow_Admin {
 		// Inlining Toggle.
 		$sanitized['frontend_inlining'] = ! empty( $input['frontend_inlining'] );
 
-		// Target Selector.
-		$sanitized['inline_selector'] = ! empty( $input['inline_selector'] )
-			? sanitize_text_field( $input['inline_selector'] )
-			: 'img.style-svg, img.svg-flow';
+		// Target Selector: plain CSS selector characters only, capped in length.
+		$selector                     = isset( $input['inline_selector'] ) ? sanitize_text_field( $input['inline_selector'] ) : '';
+		$selector                     = substr( preg_replace( '/[^A-Za-z0-9_\-\.\s,#>+~:\[\]="\'*()]/', '', $selector ), 0, 255 );
+		$sanitized['inline_selector'] = '' !== trim( $selector ) ? trim( $selector ) : 'img.style-svg, img.svg-flow';
 
 		// Responsive CSS Toggle.
 		$sanitized['responsive_css'] = ! empty( $input['responsive_css'] );
@@ -315,7 +324,7 @@ class SVGFlow_Admin {
 					</p>
 					<div class="svg-flow-copy-box">
 						<code id="svg-flow-target-class"><?php echo esc_html( $first_selector ); ?></code>
-						<button type="button" class="button button-primary svg-flow-copy-btn" data-target="svg-flow-target-class">
+						<button type="button" class="button button-primary svg-flow-copy-btn" data-target="svg-flow-target-class" data-copied-label="<?php esc_attr_e( 'Copied!', 'svigent-tools' ); ?>">
 							<span class="dashicons dashicons-admin-page"></span><?php esc_html_e( 'Copy', 'svigent-tools' ); ?>
 						</button>
 					</div>

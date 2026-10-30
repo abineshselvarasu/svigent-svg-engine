@@ -1,0 +1,35 @@
+/**
+ * Media Library SVG preview fixes, loaded on all admin screens.
+ *
+ * @package SvigentTools
+ * @since   1.0.0
+ */
+
+.attachment-preview .thumbnail img[src$=".svg"],
+.attachment-preview .thumbnail img[src*=".svg?"],
+.attachment-preview .thumbnail img[src$=".svgz"],
+.attachment-preview .thumbnail img[src*=".svgz?"],
+.media-icon img[src$=".svg"],
+.media-icon img[src*=".svg?"],
+.media-icon img[src$=".svgz"],
+.media-icon img[src*=".svgz?"] {
+	width: 100% !important;
+	height: auto !important;
+	max-height: 100% !important;
+	object-fit: contain;
+}
+
+/* Attachment Details Modal Preview */
+.attachment-details .thumbnail img[src$=".svg"],
+.attachment-details .thumbnail img[src*=".svg?"],
+.attachment-details .thumbnail img[src$=".svgz"],
+.attachment-details .thumbnail img[src*=".svgz?"] {
+	max-width: 100% !important;
+	height: auto !important;
+}
+
+/* Featured Image Meta Box Container */
+.svg-flow-featured-thumb img {
+	width: 100% !important;
+	height: auto !important;
+}

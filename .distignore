@@ -1,0 +1,15 @@
+# Files left out of the WordPress.org release (used by `wp dist-archive`).
+/.git
+/.github
+/.wordpress-org
+/.distignore
+/.gitignore
+/blueprint.json
+/composer.lock
+/README.md
+/vendor/bin
+/vendor/enshrined/svg-sanitize/CHANGELOG.md
+/vendor/enshrined/svg-sanitize/README.md
+/vendor/enshrined/svg-sanitize/SECURITY.md
+/vendor/enshrined/svg-sanitize/composer.json
+/vendor/enshrined/svg-sanitize/src/svg-scanner.php

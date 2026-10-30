@@ -4,7 +4,7 @@ Tags: svg, svg upload, inline svg, svg sanitizer, safe svg
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,10 +100,24 @@ No. Upload SVG files and switch features on from the settings screen. Developers
 
 == Upgrade Notice ==
 
+= 1.0.3 =
+Security and performance release: stricter SVG upload checks, faster Media Library, and a lighter plugin package.
+
 = 1.0.2 =
 Security release: hardens SVG sanitization and the frontend inliner. Update recommended for all sites.
 
 == Changelog ==
+
+= 1.0.3 =
+* Security: SVG and SVGZ files are only accepted when the user is allowed to upload SVGs and the file content really is an SVG.
+* Security: Uploads that are not an `<svg>` document after sanitization are rejected, and plain SVG files are now subject to the same 10 MB limit as SVGZ.
+* Security: Reading SVG dimensions now uses the decompression limit and blocks network access during XML parsing.
+* Security: The bundled `svg-scanner.php` command-line tool is no longer shipped.
+* Performance: SVG dimensions come from saved attachment data instead of re-reading the file on every Media Library and image request.
+* Performance: The inliner fetches each SVG once even when several images use it at the same time, and never retries a failed URL.
+* Performance: Frontend styles are printed inline and only when inline rendering is enabled; settings screen styles load only on the settings screen.
+* Uninstall: On multisite, settings are now removed from every site.
+* Cleanup: Removed directory banners, icons, and screenshots from the plugin package, unused code, and the PHP version check that WordPress already enforces.
 
 = 1.0.2 =
 * Security: The frontend inliner now only fetches SVGs from your own `wp-content` and uploads folders. Images hosted elsewhere stay as normal `<img>` tags. Use the `svg_flow_inline_allowed_urls` filter to allow a CDN.

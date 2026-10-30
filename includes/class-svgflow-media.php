@@ -1,8 +1,8 @@
 <?php
 /**
- * Media library integration and dimension calculation module for SVGFlow.
+ * Media library integration and dimension calculation module for Svigent SVG Engine.
  *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
@@ -12,6 +12,13 @@ defined( 'ABSPATH' ) || exit;
  * Class SVGFlow_Media
  */
 class SVGFlow_Media {
+
+	/**
+	 * Per-request cache of attachment dimensions, keyed by attachment ID.
+	 *
+	 * @var array
+	 */
+	private $dimension_cache = array();
 
 	/**
 	 * Constructor.
@@ -32,13 +39,12 @@ class SVGFlow_Media {
 	 * Enqueue admin styles for Media Library SVG display.
 	 *
 	 * @since  1.0.0
-	 * @param  string $hook Current admin screen hook.
 	 * @return void
 	 */
-	public function enqueue_admin_assets( $hook ) {
+	public function enqueue_admin_assets() {
 		wp_enqueue_style(
-			'svg-flow-admin',
-			SVIGENT_TOOLS_URL . 'assets/css/admin.css',
+			'svg-flow-media',
+			SVIGENT_TOOLS_URL . 'assets/css/media.css',
 			array(),
 			SVIGENT_TOOLS_VERSION
 		);
@@ -104,8 +110,7 @@ class SVGFlow_Media {
 	 */
 	public function prepare_svg_for_js( $response, $attachment, $meta ) {
 		if ( isset( $response['mime'] ) && 'image/svg+xml' === $response['mime'] ) {
-			$file_path  = get_attached_file( $attachment->ID );
-			$dimensions = $this->get_svg_dimensions( $file_path );
+			$dimensions = $this->get_attachment_dimensions( $attachment->ID );
 
 			if ( $dimensions ) {
 				$response['width']       = (int) $dimensions['width'];
@@ -146,8 +151,7 @@ class SVGFlow_Media {
 	public function filter_attachment_image_src( $image, $attachment_id, $size, $icon ) {
 		if ( is_array( $image ) && 'image/svg+xml' === get_post_mime_type( $attachment_id ) ) {
 			if ( empty( $image[1] ) || empty( $image[2] ) ) {
-				$file_path  = get_attached_file( $attachment_id );
-				$dimensions = $this->get_svg_dimensions( $file_path );
+				$dimensions = $this->get_attachment_dimensions( $attachment_id );
 
 				if ( $dimensions ) {
 					$image[1] = (int) $dimensions['width'];
@@ -205,9 +209,8 @@ class SVGFlow_Media {
 	 * @return string
 	 */
 	public function filter_get_image_tag( $html, $id, $alt, $title, $align, $size ) {
-		if ( 'image/svg+xml' === get_post_mime_type( $id ) ) {
-			$file_path  = get_attached_file( $id );
-			$dimensions = $this->get_svg_dimensions( $file_path );
+		if ( false !== strpos( $html, '="1"' ) && 'image/svg+xml' === get_post_mime_type( $id ) ) {
+			$dimensions = $this->get_attachment_dimensions( $id );
 
 			if ( $dimensions && ! empty( $dimensions['width'] ) && ! empty( $dimensions['height'] ) ) {
 				$html = preg_replace( '/width="1"\s+/i', sprintf( 'width="%d" ', $dimensions['width'] ), $html );
@@ -219,6 +222,37 @@ class SVGFlow_Media {
 	}
 
 	/**
+	 * Get an SVG attachment's dimensions, preferring stored metadata over parsing the file.
+	 *
+	 * @since  1.0.3
+	 * @param  int $attachment_id Attachment ID.
+	 * @return array|false Array ['width' => ..., 'height' => ..., 'orientation' => ...] or false.
+	 */
+	public function get_attachment_dimensions( $attachment_id ) {
+		$attachment_id = (int) $attachment_id;
+
+		if ( isset( $this->dimension_cache[ $attachment_id ] ) ) {
+			return $this->dimension_cache[ $attachment_id ];
+		}
+
+		$meta = wp_get_attachment_metadata( $attachment_id );
+
+		if ( is_array( $meta ) && ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
+			$dimensions = array(
+				'width'       => (int) $meta['width'],
+				'height'      => (int) $meta['height'],
+				'orientation' => ( $meta['width'] >= $meta['height'] ) ? 'landscape' : 'portrait',
+			);
+		} else {
+			$dimensions = $this->get_svg_dimensions( get_attached_file( $attachment_id ) );
+		}
+
+		$this->dimension_cache[ $attachment_id ] = $dimensions;
+
+		return $dimensions;
+	}
+
+	/**
 	 * Extract SVG dimensions from viewBox or width/height XML attributes.
 	 *
 	 * @since  1.0.0
@@ -226,7 +260,12 @@ class SVGFlow_Media {
 	 * @return array|false Array ['width' => ..., 'height' => ..., 'orientation' => ...] or false.
 	 */
 	public function get_svg_dimensions( $file_path ) {
-		if ( ! $file_path || ! file_exists( $file_path ) || ! is_readable( $file_path ) ) {
+		if ( ! $file_path || ! is_readable( $file_path ) ) {
+			return false;
+		}
+
+		$size = filesize( $file_path );
+		if ( false === $size || $size > SVGFlow_Sanitizer::max_size() ) {
 			return false;
 		}
 
@@ -237,17 +276,16 @@ class SVGFlow_Media {
 			return false;
 		}
 
-		// Handle gzipped files.
-		if ( function_exists( 'mb_strpos' ) && 0 === mb_strpos( $content, "\x1f\x8b\x08" ) ) {
-			$content = gzdecode( $content );
+		if ( SVGFlow_Sanitizer::is_gzipped( $content ) ) {
+			$content = SVGFlow_Sanitizer::inflate( $content );
 			if ( false === $content ) {
 				return false;
 			}
 		}
 
-		// Suppress libxml errors and parse safely.
+		// LIBXML_NONET blocks any network access while parsing.
 		$prev_errors = libxml_use_internal_errors( true );
-		$xml         = simplexml_load_string( $content );
+		$xml         = simplexml_load_string( $content, 'SimpleXMLElement', LIBXML_NONET );
 		libxml_clear_errors();
 		libxml_use_internal_errors( $prev_errors );
 
@@ -259,7 +297,6 @@ class SVGFlow_Media {
 		$width      = 0;
 		$height     = 0;
 
-		// 1. Check viewBox first.
 		if ( isset( $attributes['viewBox'] ) ) {
 			$viewbox_parts = preg_split( '/[\s,]+/', trim( (string) $attributes['viewBox'] ) );
 			if ( isset( $viewbox_parts[2], $viewbox_parts[3] ) ) {
@@ -268,7 +305,7 @@ class SVGFlow_Media {
 			}
 		}
 
-		// 2. Fall back to width / height attributes if numeric.
+		// Fall back to numeric width/height when there is no usable viewBox.
 		if ( ( empty( $width ) || empty( $height ) ) && isset( $attributes->width, $attributes->height ) ) {
 			$w_str = (string) $attributes->width;
 			$h_str = (string) $attributes->height;

@@ -28,7 +28,7 @@ Upload SVG files to WordPress safely. **Svigent SVG Engine** sanitizes every SVG
 ## Screenshot
 
 <p align="center">
-  <img src="assets/screenshots/screenshot-1.png" alt="Svigent SVG Engine Settings Dashboard" width="800">
+  <img src=".wordpress-org/screenshot-1.png" alt="Svigent SVG Engine Settings Dashboard" width="800">
 </p>
 
 ---

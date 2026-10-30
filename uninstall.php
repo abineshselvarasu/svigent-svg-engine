@@ -1,22 +1,24 @@
 <?php
 /**
- * Uninstallation cleanup script for SVGFlow.
+ * Removes the plugin's settings when it is deleted from the Plugins screen.
  *
- * Triggered automatically when the plugin is deleted from the WordPress admin.
- * Removes stored plugin options and metadata without leaving orphan database rows.
- *
- * @package SVGFlow
+ * @package SvigentTools
  * @since   1.0.0
  */
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-// Delete plugin settings option.
-delete_option( 'svigent_tools_settings' );
-delete_option( 'svg_flow_settings' );
-
-// For WordPress multisite networks.
 if ( is_multisite() ) {
-	delete_site_option( 'svigent_tools_settings' );
-	delete_site_option( 'svg_flow_settings' );
+	$svigent_tools_site_ids = get_sites(
+		array(
+			'fields' => 'ids',
+			'number' => 0,
+		)
+	);
+
+	foreach ( $svigent_tools_site_ids as $svigent_tools_site_id ) {
+		delete_blog_option( $svigent_tools_site_id, 'svg_flow_settings' );
+	}
+} else {
+	delete_option( 'svg_flow_settings' );
 }
