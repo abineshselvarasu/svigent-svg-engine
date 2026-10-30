@@ -9,11 +9,22 @@
 defined( 'ABSPATH' ) || exit;
 
 use enshrined\svgSanitize\Sanitizer;
+use enshrined\svgSanitize\data\AllowedAttributes;
+use enshrined\svgSanitize\data\AllowedTags;
+use enshrined\svgSanitize\data\AttributeInterface;
+use enshrined\svgSanitize\data\TagInterface;
 
 /**
  * Class SVGFlow_Sanitizer
  */
 class SVGFlow_Sanitizer {
+
+	/**
+	 * Default maximum size (in bytes) a compressed .svgz file may inflate to.
+	 *
+	 * @since 1.0.2
+	 */
+	const DEFAULT_MAX_INFLATED_SIZE = 10485760;
 
 	/**
 	 * Sanitizer library instance.
@@ -135,13 +146,7 @@ class SVGFlow_Sanitizer {
 			return $file;
 		}
 
-		$sanitization_enabled = SVGFlow_Core::get_setting( 'sanitization_enabled', true );
-
-		if ( ! $sanitization_enabled ) {
-			return $file;
-		}
-
-		// Execute sanitization.
+		// Sanitization always runs; it cannot be switched off since 1.0.2.
 		$sanitized = $this->sanitize_file( $file['tmp_name'] );
 
 		if ( ! $sanitized ) {
@@ -183,7 +188,7 @@ class SVGFlow_Sanitizer {
 		$is_gzipped = $this->is_gzipped( $raw_content );
 
 		if ( $is_gzipped ) {
-			$raw_content = gzdecode( $raw_content );
+			$raw_content = $this->inflate( $raw_content );
 			if ( false === $raw_content ) {
 				return false;
 			}
@@ -194,18 +199,66 @@ class SVGFlow_Sanitizer {
 		 */
 		$this->sanitizer->removeXMLTag( true );
 		$this->sanitizer->minify( false );
+		$this->sanitizer->removeRemoteReferences( true );
 
 		/**
-		 * Filters for custom allowed tags and attributes.
+		 * Filters the SVG tags kept during sanitization.
+		 *
+		 * @since 1.0.0
+		 * @since 1.0.2 Receives the library's default list instead of null.
+		 * @param string[] $tags Allowed tag names.
 		 */
-		$custom_tags = apply_filters( 'svg_flow_allowed_tags', null );
+		$custom_tags = apply_filters( 'svg_flow_allowed_tags', AllowedTags::getTags() );
 		if ( is_array( $custom_tags ) ) {
-			$this->sanitizer->setAllowedTags( $custom_tags );
+			$tag_list        = new class() implements TagInterface {
+				/**
+				 * Allowed tag names.
+				 *
+				 * @var string[]
+				 */
+				public static $tags = array();
+
+				/**
+				 * Return allowed tag names.
+				 *
+				 * @return string[]
+				 */
+				public static function getTags() {
+					return self::$tags;
+				}
+			};
+			$tag_list::$tags = array_values( array_filter( $custom_tags, 'is_string' ) );
+			$this->sanitizer->setAllowedTags( $tag_list );
 		}
 
-		$custom_attrs = apply_filters( 'svg_flow_allowed_attributes', null );
+		/**
+		 * Filters the SVG attributes kept during sanitization.
+		 *
+		 * @since 1.0.0
+		 * @since 1.0.2 Receives the library's default list instead of null.
+		 * @param string[] $attributes Allowed attribute names.
+		 */
+		$custom_attrs = apply_filters( 'svg_flow_allowed_attributes', AllowedAttributes::getAttributes() );
 		if ( is_array( $custom_attrs ) ) {
-			$this->sanitizer->setAllowedAttrs( $custom_attrs );
+			$attr_list              = new class() implements AttributeInterface {
+				/**
+				 * Allowed attribute names.
+				 *
+				 * @var string[]
+				 */
+				public static $attributes = array();
+
+				/**
+				 * Return allowed attribute names.
+				 *
+				 * @return string[]
+				 */
+				public static function getAttributes() {
+					return self::$attributes;
+				}
+			};
+			$attr_list::$attributes = array_values( array_filter( $custom_attrs, 'is_string' ) );
+			$this->sanitizer->setAllowedAttrs( $attr_list );
 		}
 
 		$clean_content = $this->sanitizer->sanitize( $raw_content );
@@ -220,10 +273,62 @@ class SVGFlow_Sanitizer {
 		}
 
 		// Write sanitized content back to temporary file.
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		$result = file_put_contents( $file_path, $clean_content );
 
 		return ( false !== $result );
+	}
+
+	/**
+	 * Decompress gzip content in chunks, refusing anything that inflates past the size limit.
+	 *
+	 * Guards against decompression bombs: a tiny .svgz that expands to gigabytes of XML.
+	 *
+	 * @since  1.0.2
+	 * @param  string $compressed Gzip-encoded content.
+	 * @return string|false Decompressed content, or false if invalid or too large.
+	 */
+	protected function inflate( $compressed ) {
+		if ( ! function_exists( 'inflate_init' ) ) {
+			return false;
+		}
+
+		/**
+		 * Filters the maximum size (in bytes) an .svgz upload may decompress to.
+		 *
+		 * @since 1.0.2
+		 * @param int $max_size Maximum inflated size in bytes. Default 10 MB.
+		 */
+		$max_size = (int) apply_filters( 'svg_flow_max_inflated_size', self::DEFAULT_MAX_INFLATED_SIZE );
+
+		$context = inflate_init( ZLIB_ENCODING_GZIP );
+		if ( false === $context ) {
+			return false;
+		}
+
+		$output = '';
+		$length = strlen( $compressed );
+
+		for ( $offset = 0; $offset < $length; $offset += 8192 ) {
+			$chunk = inflate_add( $context, substr( $compressed, $offset, 8192 ), ZLIB_SYNC_FLUSH );
+			if ( false === $chunk ) {
+				return false;
+			}
+
+			$output .= $chunk;
+			if ( strlen( $output ) > $max_size ) {
+				return false;
+			}
+		}
+
+		$tail = inflate_add( $context, '', ZLIB_FINISH );
+		if ( false === $tail ) {
+			return false;
+		}
+
+		$output .= $tail;
+
+		return ( strlen( $output ) > $max_size ) ? false : $output;
 	}
 
 	/**

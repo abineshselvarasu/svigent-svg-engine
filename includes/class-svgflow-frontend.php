@@ -55,11 +55,33 @@ class SVGFlow_Frontend {
 				? sanitize_text_field( $settings['inline_selector'] )
 				: 'img.style-svg, img.svg-flow';
 
+			$upload_dir = wp_get_upload_dir();
+
+			/**
+			 * Filters the base URLs the inliner may fetch SVGs from.
+			 *
+			 * Images whose src falls outside these locations are left as plain <img> tags,
+			 * so SVG markup from third-party hosts never lands in the page.
+			 *
+			 * @since 1.0.2
+			 * @param string[] $allowed_urls Base URLs. Defaults to wp-content and the uploads folder.
+			 */
+			$allowed_urls = (array) apply_filters(
+				'svg_flow_inline_allowed_urls',
+				array_unique(
+					array(
+						trailingslashit( content_url() ),
+						trailingslashit( $upload_dir['baseurl'] ),
+					)
+				)
+			);
+
 			wp_localize_script(
 				'svg-flow-frontend',
 				'svgFlowConfig',
 				array(
-					'selector' => $selector,
+					'selector'    => $selector,
+					'allowedUrls' => array_values( array_map( 'esc_url_raw', $allowed_urls ) ),
 				)
 			);
 		}

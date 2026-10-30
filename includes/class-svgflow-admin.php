@@ -39,8 +39,8 @@ class SVGFlow_Admin {
 	 */
 	public function register_admin_menu() {
 		$this->page_hook = add_options_page(
-			esc_html__( 'WP SVG Engine Settings', 'svigent-tools' ),
-			esc_html__( 'WP SVG Engine', 'svigent-tools' ),
+			esc_html__( 'Svigent SVG Engine Settings', 'svigent-tools' ),
+			esc_html__( 'Svigent SVG Engine', 'svigent-tools' ),
 			'manage_options',
 			'svigent-tools',
 			array( $this, 'render_settings_page' )
@@ -141,13 +141,10 @@ class SVGFlow_Admin {
 		$sanitized = array();
 
 		// Upload Permission: must be 'admin_only' or 'all_uploaders'.
-		$allowed_permissions = array( 'admin_only', 'all_uploaders' );
+		$allowed_permissions            = array( 'admin_only', 'all_uploaders' );
 		$sanitized['upload_permission'] = ( isset( $input['upload_permission'] ) && in_array( $input['upload_permission'], $allowed_permissions, true ) )
 			? $input['upload_permission']
 			: 'admin_only';
-
-		// Sanitization Toggle.
-		$sanitized['sanitization_enabled'] = ! empty( $input['sanitization_enabled'] );
 
 		// Inlining Toggle.
 		$sanitized['frontend_inlining'] = ! empty( $input['frontend_inlining'] );
@@ -193,21 +190,18 @@ class SVGFlow_Admin {
 	}
 
 	/**
-	 * Render Sanitization checkbox field.
+	 * Render Sanitization status field.
+	 *
+	 * Sanitization is always on since 1.0.2, so this is informational only.
 	 *
 	 * @since  1.0.0
 	 * @return void
 	 */
 	public function render_field_sanitization() {
-		$settings = SVGFlow_Core::get_settings();
-		$checked  = ! empty( $settings['sanitization_enabled'] );
 		?>
-		<label>
-			<input type="checkbox" name="svg_flow_settings[sanitization_enabled]" value="1" <?php checked( $checked, true ); ?> />
-			<?php esc_html_e( 'Enable automatic XML sanitization upon upload', 'svigent-tools' ); ?>
-		</label>
+		<p><strong><?php esc_html_e( 'Always on', 'svigent-tools' ); ?></strong></p>
 		<p class="description">
-			<?php esc_html_e( 'Strips malicious scripts, inline JavaScript handlers, and XML vulnerabilities. Keep enabled for maximum security.', 'svigent-tools' ); ?>
+			<?php esc_html_e( 'Every SVG and SVGZ upload is sanitized: malicious scripts, inline JavaScript handlers, remote references, and XML vulnerabilities are stripped before the file is saved.', 'svigent-tools' ); ?>
 		</p>
 		<?php
 	}
@@ -281,7 +275,6 @@ class SVGFlow_Admin {
 		}
 
 		$settings       = SVGFlow_Core::get_settings();
-		$is_sanitizing  = ! empty( $settings['sanitization_enabled'] );
 		$first_selector = 'style-svg';
 
 		if ( ! empty( $settings['inline_selector'] ) ) {
@@ -294,20 +287,12 @@ class SVGFlow_Admin {
 		<div class="wrap svg-flow-wrap">
 			<div class="svg-flow-header">
 				<div class="svg-flow-header-title">
-					<h1><?php esc_html_e( 'WP SVG Engine', 'svigent-tools' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVIGENT_TOOLS_VERSION ); ?></span></h1>
+					<h1><?php esc_html_e( 'Svigent SVG Engine', 'svigent-tools' ); ?> <span class="svg-flow-version">v<?php echo esc_html( SVIGENT_TOOLS_VERSION ); ?></span></h1>
 					<p class="svg-flow-subtitle"><?php esc_html_e( 'Safe SVG Upload & Smart Inliner Engine', 'svigent-tools' ); ?></p>
 				</div>
-				<div class="svg-flow-status-badge <?php echo esc_attr( $is_sanitizing ? 'status-active' : 'status-warning' ); ?>">
+				<div class="svg-flow-status-badge status-active">
 					<span class="status-dot"></span>
-					<span class="status-text">
-						<?php
-						if ( $is_sanitizing ) {
-							esc_html_e( 'Sanitization: Active & Secure', 'svigent-tools' );
-						} else {
-							esc_html_e( 'Sanitization: Disabled', 'svigent-tools' );
-						}
-						?>
-					</span>
+					<span class="status-text"><?php esc_html_e( 'Sanitization: Active & Secure', 'svigent-tools' ); ?></span>
 				</div>
 			</div>
 
@@ -344,7 +329,7 @@ class SVGFlow_Admin {
 				<div class="svg-flow-card">
 					<h3><?php esc_html_e( 'Security Standards', 'svigent-tools' ); ?></h3>
 					<p class="description">
-						<?php esc_html_e( 'WP SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
+						<?php esc_html_e( 'Svigent SVG Engine protects your WordPress site against Cross-Site Scripting (XSS), XML External Entity (XXE) attacks, and unauthorized upload threats using DOM-level inspection.', 'svigent-tools' ); ?>
 					</p>
 				</div>
 

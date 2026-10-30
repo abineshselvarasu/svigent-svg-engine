@@ -2,7 +2,8 @@
  * High-performance Vanilla JS SVG Inliner for SVGFlow.
  *
  * Features:
- * - Zero external dependencies (< 2KB)
+ * - Zero external dependencies
+ * - Only inlines SVGs from trusted locations, with active content stripped
  * - In-memory request deduplication & caching
  * - MutationObserver for AJAX, Gutenberg, and page builders
  * - Full attribute, CSS class, and accessibility preservation
@@ -49,6 +50,91 @@
 	var selector = getResolvedSelector( rawSelector );
 	var svgCache = new Map();
 
+	// Base URLs (host + path prefix) SVGs may be fetched from. Scheme is ignored so http/https mixes still match.
+	var allowedBases = ( config.allowedUrls || [] ).map( function( base ) {
+		try {
+			var u = new URL( base, window.location.href );
+			return u.host + u.pathname;
+		} catch ( e ) {
+			return null;
+		}
+	} ).filter( Boolean );
+
+	// Elements that can execute script or embed foreign documents.
+	var blockedTags = 'script, foreignObject, iframe, embed, object, handler, listener';
+	var unsafeUrl   = /^\s*(javascript|vbscript|data):/i;
+	var safeDataUrl = /^\s*data:image\/(png|gif|jpe?g|webp);/i;
+
+	/**
+	 * Resolve an image src to an absolute URL if it points at a trusted location.
+	 *
+	 * @param {string} src Raw src attribute.
+	 * @return {string|null} Absolute URL, or null if not allowed.
+	 */
+	function resolveTrustedUrl( src ) {
+		var url;
+		try {
+			url = new URL( src, window.location.href );
+		} catch ( e ) {
+			return null;
+		}
+
+		if ( url.protocol !== 'http:' && url.protocol !== 'https:' ) {
+			return null;
+		}
+
+		if ( ! /\.svgz?$/i.test( url.pathname ) ) {
+			return null;
+		}
+
+		var target = url.host + url.pathname;
+		for ( var i = 0; i < allowedBases.length; i++ ) {
+			if ( target.indexOf( allowedBases[ i ] ) === 0 ) {
+				return url.href;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Strip anything executable from a parsed SVG before it enters the page.
+	 *
+	 * Uploads are already sanitized server-side; this is defense in depth for
+	 * files that reached the server some other way (FTP, older uploads, etc.).
+	 *
+	 * @param {SVGSVGElement} svgElem Root SVG element.
+	 */
+	function scrubSvg( svgElem ) {
+		Array.prototype.slice.call( svgElem.querySelectorAll( blockedTags ) ).forEach( function( el ) {
+			el.parentNode.removeChild( el );
+		} );
+
+		var nodes = [ svgElem ].concat( Array.prototype.slice.call( svgElem.querySelectorAll( '*' ) ) );
+		nodes.forEach( function( el ) {
+			var tag = el.localName.toLowerCase();
+
+			// <animate>/<set> can rewrite href or event attributes at runtime.
+			if ( tag === 'animate' || tag === 'set' || tag === 'animatemotion' || tag === 'animatetransform' ) {
+				var target = ( el.getAttribute( 'attributeName' ) || '' ).toLowerCase();
+				if ( target.indexOf( 'on' ) === 0 || target.indexOf( 'href' ) !== -1 ) {
+					el.parentNode.removeChild( el );
+					return;
+				}
+			}
+
+			Array.prototype.slice.call( el.attributes ).forEach( function( attr ) {
+				var name = attr.name.toLowerCase();
+				if ( name.indexOf( 'on' ) === 0 ) {
+					el.removeAttribute( attr.name );
+				} else if ( ( name === 'href' || name === 'xlink:href' || name === 'src' || name === 'action' || name === 'formaction' ) &&
+					unsafeUrl.test( attr.value ) && ! safeDataUrl.test( attr.value ) ) {
+					el.removeAttribute( attr.name );
+				}
+			} );
+		} );
+	}
+
 	/**
 	 * Inline a single <img> element with its SVG content.
 	 *
@@ -60,8 +146,13 @@
 			return;
 		}
 
-		var src = img.getAttribute( 'src' );
-		if ( ! src || src.indexOf( '.svg' ) === -1 ) {
+		var rawSrc = img.getAttribute( 'src' );
+		if ( ! rawSrc || rawSrc.indexOf( '.svg' ) === -1 ) {
+			return;
+		}
+
+		var src = resolveTrustedUrl( rawSrc );
+		if ( ! src ) {
 			return;
 		}
 
@@ -72,7 +163,7 @@
 		if ( svgCache.has( src ) ) {
 			fetchPromise = Promise.resolve( svgCache.get( src ) );
 		} else {
-			fetchPromise = fetch( src )
+			fetchPromise = fetch( src, { credentials: 'same-origin' } )
 				.then( function( response ) {
 					if ( ! response.ok ) {
 						throw new Error( 'Network response was not ok' );
@@ -91,9 +182,11 @@
 				var doc     = parser.parseFromString( svgText, 'image/svg+xml' );
 				var svgElem = doc.querySelector( 'svg' );
 
-				if ( ! svgElem ) {
+				if ( ! svgElem || doc.querySelector( 'parsererror' ) ) {
 					return;
 				}
+
+				scrubSvg( svgElem );
 
 				// Copy ID if present.
 				if ( img.id ) {

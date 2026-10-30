@@ -179,10 +179,10 @@ class SVGFlow_Media {
 	 * Disable srcset attribute computation on SVG attachments.
 	 *
 	 * @since  1.0.0
-	 * @param  array $image_meta    Attachment metadata.
-	 * @param  array $size_array    Requested size array.
+	 * @param  array  $image_meta    Attachment metadata.
+	 * @param  array  $size_array    Requested size array.
 	 * @param  string $image_src    Image source URL.
-	 * @param  int   $attachment_id Attachment ID.
+	 * @param  int    $attachment_id Attachment ID.
 	 * @return array Empty array to prevent srcset generation.
 	 */
 	public function disable_srcset_for_svg( $image_meta, $size_array, $image_src, $attachment_id ) {
@@ -260,8 +260,8 @@ class SVGFlow_Media {
 		$height     = 0;
 
 		// 1. Check viewBox first.
-		if ( isset( $attributes->viewBox ) ) {
-			$viewbox_parts = preg_split( '/[\s,]+/', trim( (string) $attributes->viewBox ) );
+		if ( isset( $attributes['viewBox'] ) ) {
+			$viewbox_parts = preg_split( '/[\s,]+/', trim( (string) $attributes['viewBox'] ) );
 			if ( isset( $viewbox_parts[2], $viewbox_parts[3] ) ) {
 				$width  = (float) $viewbox_parts[2];
 				$height = (float) $viewbox_parts[3];

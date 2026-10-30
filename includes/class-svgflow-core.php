@@ -141,11 +141,10 @@ class SVGFlow_Core {
 	 */
 	public static function get_settings() {
 		$defaults = array(
-			'upload_permission'    => 'admin_only',
-			'sanitization_enabled' => true,
-			'frontend_inlining'    => false,
-			'inline_selector'      => 'img.style-svg, img.svg-flow',
-			'responsive_css'       => true,
+			'upload_permission' => 'admin_only',
+			'frontend_inlining' => false,
+			'inline_selector'   => 'img.style-svg, img.svg-flow',
+			'responsive_css'    => true,
 		);
 
 		$stored = get_option( 'svg_flow_settings', array() );
@@ -161,12 +160,12 @@ class SVGFlow_Core {
 	 * Retrieve a specific setting value.
 	 *
 	 * @since  1.0.0
-	 * @param  string $key     Setting key.
-	 * @param  mixed  $default Fallback value if key is not found.
+	 * @param  string $key      Setting key.
+	 * @param  mixed  $fallback Fallback value if key is not found.
 	 * @return mixed
 	 */
-	public static function get_setting( $key, $default = null ) {
+	public static function get_setting( $key, $fallback = null ) {
 		$settings = self::get_settings();
-		return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
+		return isset( $settings[ $key ] ) ? $settings[ $key ] : $fallback;
 	}
 }

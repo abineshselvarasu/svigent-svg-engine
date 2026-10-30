@@ -11,10 +11,13 @@
   ],
   "require": {
     "php": ">=7.4",
-    "enshrined/svg-sanitize": "^0.18.0"
+    "enshrined/svg-sanitize": "^1.1"
   },
   "config": {
     "optimize-autoloader": true,
-    "sort-packages": true
+    "sort-packages": true,
+    "platform": {
+      "php": "7.4"
+    }
   }
 }
