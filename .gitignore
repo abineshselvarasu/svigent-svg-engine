@@ -35,3 +35,6 @@ composer.phar
 
 # Log files
 *.log
+
+# Local WordPress Playground blueprint
+blueprint.json

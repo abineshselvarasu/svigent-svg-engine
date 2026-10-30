@@ -60,6 +60,11 @@ No! WP SVG Engine works automatically. Once enabled, you can upload SVGs and sty
 
 == Changelog ==
 
+= 1.0.1 =
+* UI & Responsiveness: Redesigned the settings screen layout into a clean, single-column workflow with enhanced mobile and tablet responsiveness.
+* UI: Redesigned the Quick Inlining Guide copy-class box with a primary action button and border styling.
+* Directory Assets: Added high-resolution icons, banners, and WordPress Playground blueprint configuration.
+
 = 1.0.0 =
 * Initial release.
 * Added safe SVG and SVGZ upload handling.
